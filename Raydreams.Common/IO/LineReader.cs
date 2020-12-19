@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Raydreams.Common.IO
 {
-	/// <summary></summary>
+	/// <summary>Enumerates line end deliminators</summary>
 	public enum Delim : int
 	{
 		Unknown = 0,
@@ -16,7 +16,7 @@ namespace Raydreams.Common.IO
 		Semicolon =3
 	}
 
-	/// <summary>Reads test file and returns each line in an array</summary>
+	/// <summary>Reads text file and returns each line as an array</summary>
 	public class LineReader
 	{
 		#region [ Fields ]
@@ -27,18 +27,11 @@ namespace Raydreams.Common.IO
 
 		#region [ Constructors ]
 
-		/// <summary></summary>
-		public LineReader()
-		{
-		}
-
 		#endregion [ Constructors ]
 
 		#region [ Methods ]
 
-		/// <summary>
-		/// Reads every line into a string array
-		/// </summary>
+		/// <summary>Reads every line into a string array</summary>
 		/// <returns>The read.</returns>
 		/// <param name="path">Path.</param>
 		public List<string> Read( string path )

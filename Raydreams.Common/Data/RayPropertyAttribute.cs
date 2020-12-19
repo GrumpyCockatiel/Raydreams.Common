@@ -5,7 +5,8 @@ using System.Reflection;
 
 namespace Raydreams.Common.Data
 {
-	/// <summary>Use to mark an object property with a source field to be read from.</summary>
+	/// <summary>Use to mark an object property with data source/destination field metadata</summary>
+    /// <remarks>Constructor can only be used to mark a source or destination field. Otherwise use named properties to use one attribute for both.</remarks>
 	[AttributeUsage( AttributeTargets.Property, AllowMultiple = true )]
 	public class RayPropertyAttribute : Attribute
 	{
@@ -20,14 +21,26 @@ namespace Raydreams.Common.Data
 
 		#region [ Constructors ]
 
-		/// <summary>A source only for a specific context</summary>
+		public RayPropertyAttribute() { }
+
+        /// <summary>A source only for a specific context</summary>
+        /// <param name="src"></param>
+        /// <param name="context"></param>
+        public RayPropertyAttribute( string src, string context )
+        {
+            this.Source = src;
+            this.Context = context;
+        }
+
+		/// <summary>A destination only for a specific context</summary>
 		/// <param name="src"></param>
 		/// <param name="context"></param>
-		//public RayPropertyAttribute( string src, string context = null )
-		//{
-		//	this.Source = src;
-		//	this.Context = context;
-		//}
+		public RayPropertyAttribute( string dest, string context, uint order )
+        {
+			this.Destination = dest;
+			this.Context = context;
+			this.Order = order;
+		}
 
 		#endregion [ Constructors ]
 
@@ -76,6 +89,7 @@ namespace Raydreams.Common.Data
 		public uint Order
 		{
 			get { return this._order; }
+			set { this._order = value; }
 		}
 
 		#endregion [ Properties ]

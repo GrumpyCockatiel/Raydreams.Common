@@ -4,7 +4,13 @@ using System.Linq;
 
 namespace Raydreams.Common.Model
 {
-    /// <summary>extension to MIME type mapper</summary>
+    /// <summary>MIME type mapper</summary>
+    /// <remarks>
+    /// Original class from Samuel Neff
+    /// https://github.com/samuelneff/MimeTypeMap
+    /// Will rework later - but this works for now.
+    /// Sam is correct in that we only need to return the most common extension - not the orginal.
+    /// </remarks>
     public static class MimeTypeMap
     {
         public static readonly string DefaultMIMEType = "application/octet-stream";

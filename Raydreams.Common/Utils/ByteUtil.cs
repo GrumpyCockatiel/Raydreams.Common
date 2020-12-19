@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Raydreams.Common.Utils
 {
-	/// <summary></summary>
+	/// <summary>Functions to handle byte manipulation</summary>
 	public static class ByteUtil
 	{
 		/// <summary>Turns two bytes back to a Short</summary>
@@ -35,7 +35,7 @@ namespace Raydreams.Common.Utils
 			return end;
 		}
 
-		/// <summary></summary>
+		/// <summary>Turns an array of integers into a single bytes array</summary>
         /// <param name="n"></param>
         /// <returns></returns>
 		public static byte[] IntsToBytes( int[] n )
@@ -59,7 +59,7 @@ namespace Raydreams.Common.Utils
 			return results;
 		}
 
-		/// <summary></summary>
+		/// <summary>Turns a byte array back into an array of integers</summary>
         /// <param name="b"></param>
         /// <returns></returns>
 		public static int[] BytesToInts( byte[] b )

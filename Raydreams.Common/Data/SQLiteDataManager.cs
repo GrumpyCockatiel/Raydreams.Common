@@ -125,7 +125,7 @@ namespace Raydreams.Common.Data
 
             // get all the properties in the class
             PropertyInfo[] props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            IEnumerable<PropertyInfo> attrs = props.Where(prop => prop.GetCustomAttributes<FieldSourceAttribute>(true).Where(attr => String.IsNullOrWhiteSpace(attr.Context)).Count() > 0);
+            IEnumerable<PropertyInfo> attrs = props.Where(prop => prop.GetCustomAttributes<RayPropertyAttribute>(true).Where(attr => String.IsNullOrWhiteSpace(attr.Context)).Count() > 0);
 
             if (!withContext && attrs.Count() > 0)
                 withContext = true;
@@ -236,13 +236,13 @@ namespace Raydreams.Common.Data
                     continue;
 
                 // get the properties FieldMap attribute
-                List<FieldSourceAttribute> sources = prop.GetCustomAttributes<FieldSourceAttribute>(false).ToList();
+                List<RayPropertyAttribute> sources = prop.GetCustomAttributes<RayPropertyAttribute>(false).ToList();
 
                 // if there is not field map source, then this property is not read from the DB
                 if (sources == null || sources.Count < 1)
                     continue;
 
-                FieldSourceAttribute map = null;
+                RayPropertyAttribute map = null;
 
                 // if the context is null - then use the first empty FieldSource
                 if (String.IsNullOrWhiteSpace(context))
@@ -263,122 +263,6 @@ namespace Raydreams.Common.Data
 
             return obj;
         }
-
-
-        /// <summary>Does the actual conversion</summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="obj"></param>
-        /// <param name="prop"></param>
-        /// <param name="cursor"></param>
-        /// <param name="source"></param>
-        //private void Parse<T>(T obj, PropertyInfo prop, SQLiteDataReader cursor, string source)
-        //{
-        //    // use the source field to get the value from the dictionary
-        //    if (prop.PropertyType == typeof(string))
-        //    {
-        //        prop.SetValue(obj, cursor.GetStringValue(source));
-        //    }
-        //    else if (prop.PropertyType == typeof(DateTime))
-        //    {
-        //        if (cursor.HasColumn(source, false) && cursor[source] != Convert.DBNull)
-        //            prop.SetValue(obj, cursor[source]);
-        //        else
-        //            prop.SetValue(obj, DateTime.MinValue);
-        //    }
-        //    else if (prop.PropertyType == typeof(Nullable<DateTime>))
-        //    {
-        //        if (cursor.HasColumn(source, false) && cursor[source] != Convert.DBNull)
-        //            prop.SetValue(obj, cursor[source]);
-        //        else
-        //            prop.SetValue(obj, null);
-        //    }
-        //    else if (prop.PropertyType == typeof(int) || prop.PropertyType == typeof(long) || prop.PropertyType == typeof(double))
-        //    {
-        //        if (cursor.HasColumn(source, false) && cursor[source] != Convert.DBNull)
-        //            prop.SetValue( obj, cursor.GetStringValue(source).GetIntValue() );
-        //            //prop.SetValue(obj, cursor[source]);
-        //        else
-        //            prop.SetValue(obj, 0);
-        //    }
-        //    else if (prop.PropertyType == typeof(Nullable<int>) || prop.PropertyType == typeof(Nullable<long>) || prop.PropertyType == typeof(Nullable<double>))
-        //    {
-        //        if (cursor.HasColumn(source, false) && cursor[source] != Convert.DBNull)
-        //            prop.SetValue(obj, cursor[source]);
-        //        else
-        //            prop.SetValue(obj, null);
-        //    }
-        //    else if (prop.PropertyType == typeof(bool))
-        //    {
-        //        if (cursor.HasColumn(source, false) && cursor[source] != Convert.DBNull)
-        //            prop.SetValue(obj, cursor[source]);
-        //        else
-        //            prop.SetValue(obj, false);
-        //    }
-        //    else if (prop.PropertyType == typeof(Nullable<bool>))
-        //    {
-        //        if (cursor.HasColumn(source, false) && cursor[source] != Convert.DBNull)
-        //            prop.SetValue(obj, cursor[source]);
-        //        else
-        //            prop.SetValue(obj, null);
-        //    }
-        //    else if (prop.PropertyType == typeof(Guid))
-        //    {
-        //        if (cursor.HasColumn(source, false) && cursor[source] != Convert.DBNull)
-        //            prop.SetValue(obj, cursor[source]);
-        //        else
-        //            prop.SetValue(obj, Guid.Empty);
-        //    }
-        //    else if (prop.PropertyType == typeof(Nullable<Guid>))
-        //    {
-        //        if (cursor.HasColumn(source, false) && cursor[source] != Convert.DBNull)
-        //            prop.SetValue(obj, cursor[source]);
-        //        else
-        //            prop.SetValue(obj, null);
-        //    }
-        //    else if (prop.PropertyType == typeof(DateTimeOffset))
-        //    {
-        //        if (cursor.HasColumn(source, false) && cursor[source] != Convert.DBNull)
-        //            prop.SetValue(obj, cursor[source]);
-        //        else
-        //            prop.SetValue(obj, DateTimeOffset.MinValue);
-        //    }
-        //    else if (prop.PropertyType == typeof(Nullable<DateTimeOffset>))
-        //    {
-        //        if (cursor.HasColumn(source, false) && cursor[source] != Convert.DBNull)
-        //            prop.SetValue(obj, cursor[source]);
-        //        else
-        //            prop.SetValue(obj, null);
-        //    }
-        //    else if (prop.PropertyType.IsEnum)
-        //    {
-        //        Type t = prop.PropertyType;
-
-        //        // convert to a string value
-        //        string val = cursor.GetStringValue(source);
-
-        //        // upcast the string
-        //        Object temp = Enum.Parse(t, val, true);
-
-        //        //prop.SetValue( obj, temp );
-
-        //        // if the parsed value is not null then act normal
-        //        if (temp != null)
-        //        {
-        //            prop.SetValue(obj, temp);
-        //        }
-        //        else // if the enum type is nullable, then set to null else set to default(T)
-        //        {
-        //            if (t == typeof(Nullable<>))
-        //                prop.SetValue(obj, null);
-        //            else
-        //                prop.SetValue(obj, Activator.CreateInstance(t));
-        //        }
-        //    }
-        //    else
-        //    {
-        //        throw new System.Exception("Type not yet supported.");
-        //    }
-        //}
 
         #endregion [Methods]
     }

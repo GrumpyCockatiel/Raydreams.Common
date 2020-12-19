@@ -8,10 +8,22 @@ using System.Threading.Tasks;
 
 namespace Raydreams.Common.Extensions
 {
-	/// <summary></summary>
+	/// <summary>An attribute to mark which properties to track or hash.</summary>
+	public class TrackAttribute : Attribute
+	{
+		public TrackAttribute( bool change )
+		{
+			this.TrackChange = change;
+		}
+
+		/// <summary></summary>
+		public bool TrackChange { get; private set; }
+	}
+
+	/// <summary>Generic Object extensions mainly to just hash fields on an instance</summary>
 	public static class ObjectExtensions
 	{
-		/// <summary>Converts the entire object to a key/value pair string</summary>
+		/// <summary>Converts the entire object to a key/value pair string using the specified delim</summary>
 		public static string ToKeyValuePair<T>( T obj, string delim = ";" )
 		{
 			if ( obj == null )
@@ -28,6 +40,7 @@ namespace Raydreams.Common.Extensions
 
 			StringBuilder sb = new StringBuilder();
 
+			// iterate all properties
 			foreach ( PropertyInfo property in props )
 			{
 				if ( property.CanRead )
@@ -84,7 +97,8 @@ namespace Raydreams.Common.Extensions
 			return hash;
 		}
 
-		/// <summary>Forms a string to determine if the employee is the same</summary>
+		/// <summary>Forms a string to determine if the object is the same</summary>
+        /// <remarks>strings are NOT case sensitive</remarks>
 		public static string HashByString<T>( T obj )
 		{
 			// get all the properties in the class
@@ -104,10 +118,13 @@ namespace Raydreams.Common.Extensions
 
 				if ( map != null && map.TrackChange )
 				{
+					// null values add nothing to the hash
 					object value = prop.GetValue( obj, null );
 
 					if ( value == null )
 						continue;
+
+					// change to switch
 
 					if ( prop.PropertyType == typeof( string ) )
 					{

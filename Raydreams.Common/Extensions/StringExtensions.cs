@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace Raydreams.Common.Extensions
 {
-    /// <summary></summary>
+    /// <summary>Tons of string utility functions</summary>
     public static class StringExtensions
 	{
         /// <summary>Truncates a string to the the specified length or less</summary>

@@ -272,7 +272,7 @@ namespace Raydreams.Common.IO
 						continue;
 
 					// get the properties FieldDestination attribute
-					List<FieldDestinationAttribute> dests = property.GetCustomAttributes<FieldDestinationAttribute>( false ).ToList();
+					List<RayPropertyAttribute> dests = property.GetCustomAttributes<RayPropertyAttribute>( false ).ToList();
 
 					// if there is not field dest, then this property is not written
 					if ( dests == null || dests.Count < 1 )
@@ -281,7 +281,7 @@ namespace Raydreams.Common.IO
 					// if no specified context then use a Destination with NO Context
 					if ( String.IsNullOrWhiteSpace( context ) )
 					{
-						FieldDestinationAttribute map = dests.Where( s => String.IsNullOrWhiteSpace( s.Context )
+						RayPropertyAttribute map = dests.Where( s => String.IsNullOrWhiteSpace( s.Context )
 							&& !String.IsNullOrWhiteSpace( s.Destination )
 							&& s.Destination.Equals( header, StringComparison.InvariantCulture ) ).FirstOrDefault();
 
@@ -292,7 +292,7 @@ namespace Raydreams.Common.IO
 					}
 					else // is a context
 					{
-						FieldDestinationAttribute map = dests.Where( s => !String.IsNullOrWhiteSpace( s.Context )
+						RayPropertyAttribute map = dests.Where( s => !String.IsNullOrWhiteSpace( s.Context )
 							&& !String.IsNullOrWhiteSpace( s.Destination )
 							&& s.Context.Equals( context, StringComparison.InvariantCulture )
 							&& s.Destination.Equals( header, StringComparison.InvariantCulture ) ).FirstOrDefault();

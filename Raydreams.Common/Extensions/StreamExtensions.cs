@@ -9,9 +9,7 @@ namespace Raydreams.Common.Extensions
 {
 	public static class StreamExtensions
 	{
-		/// <summary>
-		/// Writes the characters from an ASCII string into the specified stream
-		/// </summary>
+		/// <summary>Writes the characters from an ASCII string into the specified stream</summary>
 		/// <param name="stream">The stream to write the data to.</param>
 		/// <param name="value">The value to write</param>
 		public static void Write(this Stream stream, string value)

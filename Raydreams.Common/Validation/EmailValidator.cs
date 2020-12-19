@@ -27,12 +27,8 @@ using System;
 
 namespace Raydreams.Common.Validation
 {
-	/// <summary>
-	/// An Email validator.
-	/// </summary>
-	/// <remarks>
-	/// An Email validator.
-	/// </remarks>
+	/// <summary>An Email validator.</summary>
+	/// <remarks>An Email validator.</remarks>
 	public static class EmailValidator
 	{
 		const string AtomCharacters = "!#$%&'*+-/=?^_`{|}~";

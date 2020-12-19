@@ -70,7 +70,7 @@ namespace Raydreams.Common.Logging
 			// start with a simple query
 			string query = this.ReplaceTableNames( _cleanse );
 			SqlCommand cmd = new SqlCommand( query, this.DBConnection );
-			cmd.Parameters.Add( "@expire", SqlDbType.DateTime2 ).Value = this.GetDBValue( now );
+			cmd.Parameters.Add( "@expire", SqlDbType.DateTime2 ).Value = now;
 
 			return this.Execute( cmd );
 		}

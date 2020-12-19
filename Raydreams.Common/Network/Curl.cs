@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 namespace Raydreams.Common.Network
 {
 	/// <summary>Wraps a web request object.</summary>
+    /// <remarks>So old but sitll useful</remarks>
 	public class Curl
 	{
 		#region [Fields]

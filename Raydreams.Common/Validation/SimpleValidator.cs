@@ -3,9 +3,7 @@ using System.Reflection;
 
 namespace Raydreams.Common.Validation
 {
-	/// <summary>
-	/// A very simple object validator
-	/// </summary>
+	/// <summary>A very simple object validator</summary>
 	/// <typeparam name="T"></typeparam>
 	public class SimpleValidator<T>
 	{
@@ -13,9 +11,7 @@ namespace Raydreams.Common.Validation
 		{
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
+		/// <summary>Simply iterates over an instance and if the property is a string checks for Null or White Space only</summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
 		/// <remarks>Send an excludsion list to ignore</remarks>

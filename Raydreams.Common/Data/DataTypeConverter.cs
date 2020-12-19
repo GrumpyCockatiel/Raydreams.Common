@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MongoDB.Bson;
 
-namespace Raydreams.Common.Extensions
+namespace Raydreams.Common.Data
 {
-    /// <summary>Extensions to more robustly convert data types from a string.</summary>
+    /// <summary>Static Functions to more robustly convert data types from a string to a specific data type.</summary>
     public static class DataTypeConverter
 	{
 		/// <summary></summary>
@@ -148,7 +144,7 @@ namespace Raydreams.Common.Extensions
             return null;
         }
 
-        /// <summary></summary>
+        /// <summary>Converts a string to an enum value of enum T</summary>
         /// <returns></returns>
         public static T GetEnumValue<T>(this string value) where T : struct, IConvertible
         {
@@ -163,7 +159,7 @@ namespace Raydreams.Common.Extensions
             return default(T);
         }
 
-        /// <summary></summary>
+        /// <summary>Converts a string to a BSON Object ID</summary>
 		/// <returns></returns>
 		public static ObjectId GetObjectIdValue( this string value )
 		{
@@ -178,7 +174,5 @@ namespace Raydreams.Common.Extensions
 
 			return ObjectId.Empty;
 		}
-
-
     }
 }

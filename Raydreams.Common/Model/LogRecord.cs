@@ -22,20 +22,20 @@ namespace Raydreams.Common.Model
         }
 
         /// <summary>Unique ID of the record</summary>
-		[FieldSource("ID")]
+		[RayProperty( Source = "ID")]
         public long ID { get; set; }
 
         /// <summary>DateTime of the event preferably in UTC</summary>
         [BsonElement("timestamp")]
         [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
         [JsonProperty(PropertyName = "timestamp")]
-        [FieldSource("Timestamp")]
+        [RayProperty( Source = "Timestamp" )]
         public DateTime Timestamp { get; set; }
 
         /// <summary>What was the source of the log - the app, service, ...</summary>
         [BsonElement("source")]
         [JsonProperty(PropertyName = "source")]
-        [FieldSource("Source")]
+        [RayProperty( Source = "Source" )]
         public string Source { get; set; }
 
         /// <summary>Severity</summary>
@@ -44,19 +44,19 @@ namespace Raydreams.Common.Model
         [BsonRepresentation(BsonType.String)]
         [JsonConverter(typeof(StringEnumConverter))]
         [JsonProperty(PropertyName = "level")]
-        [FieldSource("Level")]
+        [RayProperty( Source = "Level" )]
         public LogLevel Level { get; set; }
 
         /// <summary>An optional category to help orgnaize log events.</summary>
         [BsonElement("category")]
         [JsonProperty(PropertyName = "category")]
-        [FieldSource("Category")]
+        [RayProperty( Source = "Category")]
         public string Category { get; set; }
 
         /// <summary>The actual log message</summary>
         [BsonElement("message")]
         [JsonProperty(PropertyName = "message")]
-        [FieldSource("Message")]
+        [RayProperty( Source = "Message")]
         public string Message { get; set; }
 
         /// <summary>The actual log message</summary>

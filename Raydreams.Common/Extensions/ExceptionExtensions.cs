@@ -2,17 +2,17 @@
 
 namespace Raydreams.Common.Extensions
 {
-	/// <summary></summary>
+	/// <summary>Extensions to System.Exception</summary>
 	public static class ExceptionExtensions
 	{
-		/// <summary>Creates a string message from an exception. Extenstion method</summary>
-		/// <param name="exp"></param>
+		/// <summary>Creates a verbose string message from an exception</summary>
+		/// <param name="exp">The exception itself</param>
 		/// <param name="includeStackTrace"></param>
 		/// <returns></returns>
 		public static string ToLogMsg(this System.Exception exp, bool includeStackTrace = false)
 		{
-			StringBuilder msg = new StringBuilder();
-			msg.AppendFormat( "{0} : {1} ", exp.GetType().FullName, exp.Message );
+			StringBuilder msg = new StringBuilder( $"{exp.GetType().FullName} : {exp.Message} " );
+
 			if ( includeStackTrace )
 				msg.Append( exp.StackTrace );
 
