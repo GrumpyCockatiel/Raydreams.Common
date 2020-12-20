@@ -3,9 +3,9 @@
 <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <PackageId>raydreams.common</PackageId>
-    <PackageVersion>1.0.1.0</PackageVersion>
+    <PackageVersion>1.0.2.0</PackageVersion>
     <Authors>TAG Digital Studios</Authors>
-    <Description>Miscellaneous catch-all C# .NET library mainly used for abstracting data repositories.</Description>
+    <Description>A miscellaneous library mainly used for abstracting data repositories.</Description>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Title>Radyreams.Common</Title>
    <RepositoryUrl>https://github.com/GrumpyCockatiel/Raydreams.Common</RepositoryUrl>
@@ -14,7 +14,8 @@
    <PackageProjectUrl>https://github.com/GrumpyCockatiel/Raydreams.Common</PackageProjectUrl>
    <Summary>A personal library</Summary>
    <Version>1.0.1.0</Version>
-   <ReleaseVersion>1.0.1.*</ReleaseVersion>
+   <ReleaseVersion>1.0.2.*</ReleaseVersion>
+   <PackageReleaseNotes>This is a personal library but you are welcome to use it.</PackageReleaseNotes>
 </PropertyGroup>
 
   <ItemGroup>

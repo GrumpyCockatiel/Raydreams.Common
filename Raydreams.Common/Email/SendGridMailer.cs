@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Raydreams.Common.Email
 {
-	/// <summary>Sends out emails using SendGrid</summary>
+	/// <summary>Concrete emailer for SendGrid</summary>
 	public class SendGridMailer : IMailer
 	{
 		private string[] _to = { };
@@ -15,7 +15,7 @@ namespace Raydreams.Common.Email
 
 		private string _key = String.Empty;
 
-		/// <summary></summary>
+		/// <summary>Construct with the SendGrid API Key</summary>
         /// <param name="key">SendGrid API key</param>
 		public SendGridMailer(string key)
 		{

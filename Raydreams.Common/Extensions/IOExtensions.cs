@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -83,6 +84,26 @@ namespace Raydreams.Common.Extensions
 			return 1;
 		}
 
+		/// <summary>Loads an XML file into a Dataset given the specified physical file path</summary>
+        /// <param name="name">Optional name to set on the DataSet</param>
+		/// <returns>A populated DataSet object</returns>
+		public static DataSet CopyFile( this string srcPath, string name = null )
+		{
+			// validate
+			// also need to check the file exists and it is an XML file
+			if ( String.IsNullOrWhiteSpace( srcPath ) )
+				return new DataSet();
+
+			// name is optional
+			name = ( String.IsNullOrWhiteSpace( name ) ) ? Guid.NewGuid().ToString() : name.Trim();
+
+			// create the data set
+			DataSet ds = new DataSet( name );
+			_ = ds.ReadXml( srcPath, XmlReadMode.InferSchema );
+
+			// return
+			return ds;
+		}
 
 		/// <summary>Moves a file from one folder to another the <see cref="SourceFileName"/> to the <see cref="ArchiveFolder"/></summary>
 		/// <param name="suffix">an additional suffix to add to the end of the file name</param>

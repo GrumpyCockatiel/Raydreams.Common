@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Raydreams.Common.Email
 {
-	/// <summary></summary>
+	/// <summary>This is the beginning of a token replacement class. More to come.</summary>
 	public static class Templator
 	{
 		/// <summary>Replaces tokens in text with those from a dictionary</summary>
