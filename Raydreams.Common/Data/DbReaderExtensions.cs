@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Raydreams.Common.Data
 {
-	/// <summary></summary>
+	/// <summary>Extends the DBReader to parse versious data types</summary>
 	public static class DbReaderExtensions
 	{
 		/// <summary>Does the SqlDataReader have a column with the specified column name</summary>
@@ -38,7 +38,16 @@ namespace Raydreams.Common.Data
 			else if ( prop.PropertyType == typeof( DateTime ) )
 			{
 				if ( cursor.HasColumn( source, false ) && cursor[source] != Convert.DBNull )
-					prop.SetValue( obj, cursor[source] );
+				{
+					// if the source column is DateTimeOffset we have to convert
+					if ( cursor[source].GetType() == typeof( DateTimeOffset ) )
+                    {
+						DateTimeOffset temp = (DateTimeOffset)cursor[source];
+						prop.SetValue( obj, temp.DateTime );
+					}
+					else
+						prop.SetValue( obj, cursor[source] );
+				}
 				else
 					prop.SetValue( obj, DateTime.MinValue );
 			}
@@ -50,7 +59,7 @@ namespace Raydreams.Common.Data
 				else
 					prop.SetValue( obj, null );
 			}
-			// long int and double
+			// long, int and double
 			else if ( prop.PropertyType == typeof( int ) || prop.PropertyType == typeof( long ) || prop.PropertyType == typeof( double ) )
 			{
 				if ( cursor.HasColumn( source, false ) && cursor[source] != Convert.DBNull )
@@ -58,7 +67,7 @@ namespace Raydreams.Common.Data
 				else
 					prop.SetValue( obj, 0 );
 			}
-			// nullable long int and double
+			// nullable long, int and double
 			else if ( prop.PropertyType == typeof( Nullable<int> ) || prop.PropertyType == typeof( Nullable<long> ) || prop.PropertyType == typeof( Nullable<double> ) )
 			{
 				if ( cursor.HasColumn( source, false ) && cursor[source] != Convert.DBNull )

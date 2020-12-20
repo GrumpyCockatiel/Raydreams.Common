@@ -1,20 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Raydreams.Common.Extensions;
+using Raydreams.Common.Logging;
 using Raydreams.Common.Model;
 
-namespace Raydreams.Common.Logging
+namespace Raydreams.Common.Data
 {
 	/// <summary>Logs to a Mongo DB</summary>
-	public class MongoLogger : ILogger
+	public class MongoLogger : MongoDataManager<LogRecord, long> , ILogger
 	{
 		#region [Fields]
-
-		private MongoClient _dbConn = null;
-
-		private string _db = "";
 
 		private string _table = "Logs";
 
@@ -24,31 +22,38 @@ namespace Raydreams.Common.Logging
 
 		#endregion [Fields]
 
-		public MongoLogger( string connStr, string db, string table, string src = null )
+		/// <summary></summary>
+        /// <param name="connStr"></param>
+        /// <param name="db"></param>
+        /// <param name="table"></param>
+        /// <param name="src"></param>
+		public MongoLogger( string connStr, string db, string table, string src = null ) : base( connStr, db )
 		{
-			if ( !String.IsNullOrWhiteSpace( connStr ) )
-				this._dbConn = new MongoClient( connStr );
+			//if ( !String.IsNullOrWhiteSpace( connStr ) )
+				//this._dbConn = new MongoClient( connStr );
 
-			this.Database = db;
 			this.TableName = table;
 			this.Source = src;
 		}
 
 		#region [Properties]
 
-		/// <summary></summary>
-		public MongoClient Client
-		{
-			get { return this._dbConn; }
-			protected set { this._dbConn = value; }
-		}
+		///// <summary></summary>
+		//public MongoClient Client
+		//{
+		//	get { return this._dbConn; }
+		//	protected set { this._dbConn = value; }
+		//}
+
+		///// <summary></summary>
+		//public string Database
+		//{
+		//	get { return this._db; }
+		//	protected set { if ( !String.IsNullOrWhiteSpace( value ) ) this._db = value.Trim(); }
+		//}
 
 		/// <summary></summary>
-		public string Database
-		{
-			get { return this._db; }
-			protected set { if ( !String.IsNullOrWhiteSpace( value ) ) this._db = value.Trim(); }
-		}
+		public int Max { get; set; } = 100;
 
 		/// <summary>The name of the logging table</summary>
 		public string TableName
@@ -80,6 +85,70 @@ namespace Raydreams.Common.Logging
 		}
 
 		#endregion [Properties]
+
+		#region [ Base Methods ]
+
+		/// <summary>Sample method that just gets all the logs</summary>
+		public List<LogRecord> GetAll()
+		{
+			return base.GetAll( this.TableName );
+		}
+
+		/// <summary>Gets only transactions for this day right now</summary>
+		/// <returns></returns>
+		public List<LogRecord> GetTop( int top = 100 )
+		{
+			if ( top > this.Max )
+				top = this.Max;
+
+			IMongoCollection<LogRecord> collection = this.Database.GetCollection<LogRecord>( this.TableName );
+			List<LogRecord> results = collection.Find( FilterDefinition<LogRecord>.Empty ).Sort( "{timestamp: -1}" ).Limit( top ).ToList();
+
+			return ( results != null && results.Count > 0 ) ? results : new List<LogRecord>();
+		}
+
+		/// <summary>Get logs on a single day</summary>
+		public List<LogRecord> GetByDay( DateTimeOffset day )
+		{
+			return this.GetByDates( day, day );
+		}
+
+		/// <summary>Gets only transactions for this day right now</summary>
+		/// <returns></returns>
+		public List<LogRecord> GetByDates( DateTimeOffset begin, DateTimeOffset end )
+		{
+			// normaliza the dates
+			DateTime start = begin.UtcDateTime.StartOfDay( DateTimeKind.Utc );
+			DateTime stop = ( end.UtcDateTime + new TimeSpan( 1, 0, 0, 0 ) ).StartOfDay( DateTimeKind.Utc );
+
+			List<LogRecord> results = new List<LogRecord>();
+
+			if ( start >= stop )
+				return results;
+
+			IMongoCollection<LogRecord> collection = this.Database.GetCollection<LogRecord>( this.TableName );
+			return collection.Find<LogRecord>( t => t.Timestamp >= start && t.Timestamp < stop ).ToList();
+		}
+
+		/// <summary>Deletes any logs older than the specified number of days</summary>
+		/// <param name="days">Number of days</param>
+		/// <returns>Records removed</returns>
+		public long PurgeAfter( int days = 90 )
+		{
+			if ( days < 0 )
+				return 0;
+
+			DateTime expire = DateTime.UtcNow.Subtract( new TimeSpan( days, 0, 0, 0 ) );
+
+			IMongoCollection<LogRecord> collection = this.Database.GetCollection<LogRecord>( this.TableName );
+			DeleteResult results = collection.DeleteMany<LogRecord>( t => t.Timestamp < expire );
+
+			return ( results.IsAcknowledged ) ? results.DeletedCount : 0;
+		}
+
+		#endregion [ Base Methods ]
+
+		#region [ ILogger ]
 
 		/// <summary></summary>
 		/// <param name="message"></param>
@@ -178,8 +247,8 @@ namespace Raydreams.Common.Logging
 					{ "message", msg }
 					};
 
-				IMongoDatabase db = this.Client.GetDatabase( this.Database );
-				IMongoCollection<BsonDocument> collection = db.GetCollection<BsonDocument>( this.TableName );
+				//IMongoDatabase db = this.Client.GetDatabase( this.Database );
+				IMongoCollection<BsonDocument> collection = this.Database.GetCollection<BsonDocument>( this.TableName );
 				collection.InsertOne( log );
 			}
 			catch ( System.Exception exp )
@@ -189,5 +258,7 @@ namespace Raydreams.Common.Logging
 
 			return rows;
 		}
+
+		#endregion [ ILogger ]
 	}
 }

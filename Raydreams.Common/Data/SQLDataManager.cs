@@ -7,8 +7,17 @@ using System.Text.RegularExpressions;
 
 namespace Raydreams.Common.Data
 {
-	/// <summary>Generic SQL DB Manager class to perform abstract Select and Excute statements. Create classes with FieldSource attributes to do automatic mapping.</summary>
-	/// <remarks>You should always subclass this class. Automatic mapping for Updates and Inserts is not yet supporte so you will need to add those methods to the derives class and call Execute in this class. See the LogRepository for a basic example.</remarks>
+	/// <summary>Generic SQL DB Manager class to perform abstract Select and Excute statements. Create classes with RayProperty attributes to do automatic mapping.</summary>
+	/// <remarks>
+	/// You should always subclass this class.
+    /// Automatic mapping for Updates is not yet supported so you will need to add those methods to the derived class and call Execute in this class.
+    /// See the LogRepository for a basic example.
+	/// Precedence is determined by the RayProperty attribute on the Data Object class
+	/// If there are no attributes on any property AND no context passed then a straight PropertyName mapping used
+	/// If there are no attributes on any property BUT some context passed -> thats an error and return nothing
+	/// If no context is passed (null context) then only consider Properties with an equal empty or null Context value
+	/// If a context is passed then use only Properties in the matching context.
+	/// </remarks>
 	public abstract class SQLDataManager
 	{
 		#region [Fields]
@@ -154,6 +163,7 @@ namespace Raydreams.Common.Data
 			PropertyInfo[] props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
 			IEnumerable<PropertyInfo> attrs = props.Where(prop => prop.GetCustomAttributes<RayPropertyAttribute>(true).Where(attr => String.IsNullOrWhiteSpace(attr.Context)).Count() > 0);
 
+			// no set context but there are attributes then assume null context
 			if (!withContext && attrs.Count() > 0)
 				withContext = true;
 

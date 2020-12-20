@@ -1,6 +1,8 @@
-﻿using Raydreams.Common.Extensions;
+﻿using Raydreams.Common.Data;
+using Raydreams.Common.Extensions;
 using Raydreams.Common.Model;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Reflection;
@@ -8,40 +10,47 @@ using System.Reflection;
 namespace Raydreams.Common.Logging
 {
 	/// <summary>Logs to a SQL Server DB.</summary>
-	public class SqlLogger : ILogger
+	public class SqlLogger : SQLDataManager, ILogger
 	{
+		#region [ Fields ]
+
+		private static readonly string _selectDailyLog = "SELECT * FROM {{Table}} WHERE (Timestamp > DATEADD(day, 0, DATEDIFF(day, 0, GETUTCDATE()))) ORDER BY [Timestamp] DESC";
+
+		private static readonly string _selectLastest = "SELECT TOP 100 * FROM {{Table}} ORDER BY [Timestamp] DESC";
+
+		private static readonly string _cleanse = "DELETE FROM {{Table}} WHERE [Timestamp] < @expire";
+
 		/// <summary>The SQL query to insert a log</summary>
 		private static readonly string _insertLog = "INSERT INTO {0} ([Source],[Level],[Category],[Message],[Timestamp]) VALUES (@src,@level,@cat,@msg,@ts)";
 
-		private SqlConnection _dbConn = null;
-		private string _logger = null;
-		private LogLevel _level = LogLevel.Off;
-		private string _tbl = "Logs";
-
-		public SqlLogger( string src, string connStr )
-		{
-			this.Source = src;
-			this._dbConn = new SqlConnection( connStr );
-		}
-
 		/// <summary></summary>
+		private string _src = null;
+
+		/// <summary>Min log level</summary>
+		private LogLevel _level = LogLevel.Off;
+
+		/// <summary>Log table name</summary>
+		private string _tbl = String.Empty;
+
+		#endregion [ Fields ]
+
+		/// <summary>Constructor</summary>
 		/// <param name="src">Application sending the log</param>
 		/// <param name="connStr">Connection string</param>
-		/// <param name="table">DB table</param>
-		public SqlLogger(string src, string connStr, string table)
+		/// <param name="table">DB table to log to</param>
+		public SqlLogger(string source, string connStr, string table = "Logs") : base(connStr)
 		{
-			this.Source = src;
+			this.Source = source;
 			this.TableName = table;
-			this._dbConn = new SqlConnection(connStr);
 		}
 
 		#region [Properties]
 
 		/// <summary>The DB connection</summary>
-		public SqlConnection DBConnection
-		{
-			get { return this._dbConn; }
-		}
+		//public SqlConnection DBConnection
+		//{
+		//	get { return this._dbConn; }
+		//}
 
 		/// <summary>The name of the logging table</summary>
 		public string TableName
@@ -50,7 +59,7 @@ namespace Raydreams.Common.Logging
 			set
 			{
 				if (!String.IsNullOrWhiteSpace( value ))
-					this._tbl = value.Trim();
+					this._tbl = value.Trim().ToLower();
 			}
 		}
 
@@ -64,15 +73,60 @@ namespace Raydreams.Common.Logging
 		/// <summary>The logging source. Who is doing the logging.</summary>
 		public string Source
 		{
-			get { return this._logger; }
+			get { return this._src; }
 			set
 			{
 				if ( value != null )
-					this._logger = value.Trim();
+					this._src = value.Trim();
 			}
 		}
 
 		#endregion [Properties]
+
+		#region [Methods]
+
+		/// <summary>Gets only the last 100 for now</summary>
+		/// <returns></returns>
+		public List<LogRecord> GetTop( int top = 100 )
+		{
+			// start with a simple query
+			string query = this.ReplaceTableNames( _selectLastest );
+			SqlCommand command = new SqlCommand( query, this.DBConnection );
+
+			return this.Select<LogRecord>( command );
+		}
+
+		/// <summary></summary>
+		public List<LogRecord> GetTodaysLogs()
+		{
+			// start with a simple query
+			string query = this.ReplaceTableNames( _selectDailyLog );
+			SqlCommand command = new SqlCommand( query, this.DBConnection );
+
+			return this.Select<LogRecord>( command );
+		}
+
+		/// <summary>Deletes log records over some specified number of days</summary>
+		/// <param name="days">Defaults to 365.</param>
+		/// <returns></returns>
+		public int PurgeAfter( int days = 365 )
+		{
+			if ( days < 0 )
+				return 0;
+
+			DateTime now = DateTime.Now.Subtract( new TimeSpan( days, 0, 0, 0 ) );
+
+			// start with a simple query
+			string query = this.ReplaceTableNames( _cleanse );
+			SqlCommand cmd = new SqlCommand( query, this.DBConnection );
+			cmd.Parameters.Add( "@expire", SqlDbType.DateTime2 ).Value = this.GetDBValue( now );
+
+			return this.Execute( cmd );
+		}
+
+		#endregion [Methods]
+
+		#region [ ILogger ]
 
 		/// <summary></summary>
 		/// <param name="message"></param>
@@ -182,5 +236,7 @@ namespace Raydreams.Common.Logging
 
 			return rows;
 		}
-	}
+
+        #endregion [ ILogger ]
+    }
 }

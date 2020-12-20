@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace Raydreams.Common.AstroAlgo
+namespace Raydreams.Common.Logic
 {
     /// <summary></summary>
     public static class AstroAlgo

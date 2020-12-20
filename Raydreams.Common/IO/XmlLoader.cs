@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 
-namespace Raydreams.Common.Utilities
+namespace Raydreams.Common.IO
 {
 	/// <summary>XML Utility Class</summary>
 	public static class XmlLoader

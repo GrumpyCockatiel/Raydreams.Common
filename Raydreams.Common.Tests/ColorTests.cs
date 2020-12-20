@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Raydreams.Common.Extensions;
-using Raydreams.Common.AstroAlgo;
 using Raydreams.Common.Utilities;
 using System.Drawing;
 using Raydreams.Common.Logic;
