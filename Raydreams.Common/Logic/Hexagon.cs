@@ -14,8 +14,7 @@ namespace Raydreams.Common.Logic
         private PointF[] _points = null;
         private int _id = 0;
 
-        public Hexagon()
-            : this(0.0F, 0.0F, 100.0F)
+        public Hexagon() : this(0.0F, 0.0F, 100.0F)
         {
         }
 

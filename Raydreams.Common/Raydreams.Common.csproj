@@ -23,9 +23,12 @@
     <PackageReference Include="MongoDB.Driver" Version="2.11.5" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.113.6" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
+    <PackageReference Include="SendGrid" Version="9.22.0" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.7.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Config\" />
     <Folder Include="Deprecated\" />
+    <Folder Include="Data\Azure\" />
   </ItemGroup>
 </Project>

@@ -38,20 +38,6 @@ namespace Raydreams.Common.Data
 
 		#region [Properties]
 
-		///// <summary></summary>
-		//public MongoClient Client
-		//{
-		//	get { return this._dbConn; }
-		//	protected set { this._dbConn = value; }
-		//}
-
-		///// <summary></summary>
-		//public string Database
-		//{
-		//	get { return this._db; }
-		//	protected set { if ( !String.IsNullOrWhiteSpace( value ) ) this._db = value.Trim(); }
-		//}
-
 		/// <summary></summary>
 		public int Max { get; set; } = 100;
 

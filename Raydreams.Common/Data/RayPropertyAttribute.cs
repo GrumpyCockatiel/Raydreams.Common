@@ -6,7 +6,9 @@ using System.Reflection;
 namespace Raydreams.Common.Data
 {
 	/// <summary>Use to mark an object property with data source/destination field metadata</summary>
-    /// <remarks>Constructor can only be used to mark a source or destination field. Otherwise use named properties to use one attribute for both.</remarks>
+    /// <remarks>Constructor can only be used to mark a source or destination field.
+    /// Otherwise use named properties to use one attribute for both.
+    /// </remarks>
 	[AttributeUsage( AttributeTargets.Property, AllowMultiple = true )]
 	public class RayPropertyAttribute : Attribute
 	{

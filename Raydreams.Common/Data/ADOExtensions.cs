@@ -8,16 +8,16 @@ using System.Reflection;
 namespace Raydreams.Common.Data
 {
     /// <summary></summary>
-	public static class ADOExtensions
-	{
+    public static class DbConnectionExtensions
+    {
         /// <summary>Tests a SQL Connection to see if it can connect to the DB.</summary>
         /// <param name="conn"></param>
         /// <returns></returns>
-        public static bool TestSqlConnection(this DbConnection conn)
+        public static bool TestSqlConnection( this DbConnection conn )
         {
             bool results = false;
 
-            if (conn == null || String.IsNullOrWhiteSpace(conn.ConnectionString))
+            if ( conn == null || String.IsNullOrWhiteSpace( conn.ConnectionString ) )
                 return results;
 
             try
@@ -29,14 +29,18 @@ namespace Raydreams.Common.Data
                 results = false;
             }
 
-            results = (conn.State == ConnectionState.Open);
+            results = ( conn.State == ConnectionState.Open );
 
-            if (conn.State != ConnectionState.Closed)
+            if ( conn.State != ConnectionState.Closed )
                 conn.Close();
 
             return results;
         }
+    }
 
+    /// <summary></summary>
+	public static class DataRowExtensions
+    {
         /// <summary>Turns a DataRow into a StringDictionary of key value pairs</summary>
         /// <param name="row"></param>
         /// <returns></returns>
@@ -99,11 +103,6 @@ namespace Raydreams.Common.Data
 
             return temp;
         }
-
-
-
-
-
 
     }
 

@@ -7,17 +7,16 @@ using System.Text.RegularExpressions;
 namespace Raydreams.Common.Network
 {
 	/// <summary>Wraps a web request object.</summary>
-    /// <remarks>So old but sitll useful</remarks>
+	/// <remarks>So old but sitll useful</remarks>
 	public class Curl
 	{
 		#region [Fields]
 		private string _url = null;
-		private string _results = null;
+		private string _results = String.Empty;
 		private int _timeout = 10000;
 		private string _contentType = null;
 		private string _charset = null;
-		private bool _removeNewlines = true;
-		private bool _removeHtml = false;
+
 		private string _userAgent = @"Mozilla/4.0 (compatible; MSIE+6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)";
 		//private string			_userAgent = @"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en) AppleWebKit/416.11 (KHTML, like Gecko) Safari/416.12";
 		#endregion [Fields]
@@ -56,6 +55,7 @@ namespace Raydreams.Common.Network
 		public string Results
 		{
 			get { return this._results; }
+			protected set { this._results = value; }
 		}
 
 		/// <summary>Get or set the user agent to use in the request.</summary>
@@ -66,18 +66,10 @@ namespace Raydreams.Common.Network
 		}
 
 		/// <summary>Get or set whether to strip newlines from the results.</summary>
-		public bool RemoveNewlines
-		{
-			get { return this._removeNewlines; }
-			set { this._removeNewlines = value; }
-		}
+		public bool RemoveNewlines { get; set; } = true;
 
 		/// <summary>Get or set whether to strip all HTML tags from the results.</summary>
-		public bool RemoveHtml
-		{
-			get { return this._removeHtml; }
-			set { this._removeHtml = value; }
-		}
+		public bool RemoveHtml { get; set; } = false;
 
 		/// <summary></summary>
 		public int Timeout
@@ -97,17 +89,18 @@ namespace Raydreams.Common.Network
 			// retrieve the resource
 			this.GetResponse( this.Url );
 
-			// post process as requested
+			// remove all the new lines
 			if ( this.RemoveNewlines )
 				this._results = this._results.Replace( "\n", String.Empty );
 
+			// strip out all the HTML tags
 			if ( this.RemoveHtml )
 				this._results = new Regex( "<[^>]*>" ).Replace( this._results, String.Empty );
 
 			return this._results;
 		}
 
-		/// <summary></summary>
+		/// <summary>Actually gets the web page and stores the body in the class</summary>
 		private void GetResponse( string url )
 		{
 			// create request

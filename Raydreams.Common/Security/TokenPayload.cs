@@ -6,15 +6,11 @@ namespace Raydreams.Common.Security
     /// <summary>Session Token structure</summary>
     public class TokenPayload
     {
-        /// <summary>The Session ID in the DB</summary>
+        /// <summary>The ID of the token</summary>
         [JsonProperty( "i" )]
         public string ID { get; set; }
 
-        /// <summary>Some Session hint that allow for quick validation. Check this property immediately after decryption for the correct value.</summary>
-        //[JsonProperty( "h" )]
-        //public string Hint { get; set; }
-
-        /// <summary>Some random Session Salt to prevent someone from guessing the next Session ID from your DB primary key generator.</summary>
+        /// <summary>Some random Session Salt to prevent someone from guessing the next ID from your ID generator in case its well known.</summary>
         [JsonProperty( "s" )]
         public string Salt { get; set; }
 
