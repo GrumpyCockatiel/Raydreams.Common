@@ -29,7 +29,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Config\" />
-    <Folder Include="Deprecated\" />
     <Folder Include="Data\Azure\" />
   </ItemGroup>
 </Project>
