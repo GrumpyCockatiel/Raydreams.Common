@@ -9,8 +9,10 @@ namespace Raydreams.Common.Extensions
 	/// <summary></summary>
 	public static class ListExtensions
 	{
-		/// <summary>Given a list of objects and a file path, will write out all the properties values of each object in the list. Mainly used for debugging and reporting.</summary>
-		/// <remarks>Mainly to dump a collection of objects to a file.</remarks>
+		/// <summary>Given a list of objects and a file path, will write out all the properties values of each object in the list.</summary>
+		/// <remarks>
+		/// Mainly used for debugging and reporting by dumping a collection of objects to a file.
+        /// </remarks>
 		public static int WriteObjectList<T>(this List<T> objects, string filePath, char delim = ';', bool quoteFields = false)
 		{
 			StringBuilder sb = new StringBuilder();

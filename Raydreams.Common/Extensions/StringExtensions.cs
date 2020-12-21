@@ -66,8 +66,9 @@ namespace Raydreams.Common.Extensions
         /// <param name="str"></param>
         /// <param name="values"></param>
         /// <returns>formatted string</returns>
-        /// <reamarks>string s = "ID {0} has duplicate records".Formatter( id );
-        /// made obsolete with the new C# $"{myVar}"
+        /// <reamarks>
+        /// string s = "ID {0} has duplicate records".Formatter( id );
+        /// made obsolete with the new C# $"{myVar} construct"
         /// </reamarks>
         public static string Formatter(this string str, params object[] values)
 		{
@@ -144,7 +145,7 @@ namespace Raydreams.Common.Extensions
 			return parts[1].Trim();
 		}
 
-		/// <summary>Add a backslash to any string without one.</summary>
+		/// <summary>Test and add a backslash to any string without one.</summary>
 		/// <param name="str"></param>
 		/// <returns></returns>
 		public static string TrailingBackslash(this System.String str)
@@ -186,9 +187,10 @@ namespace Raydreams.Common.Extensions
                 return new MailAddress(str).User;
             }
             catch
-            { }
-
-            return null;
+            {
+                // not ideal to handle in the catch block but...
+                return null;
+            }
         }
 
         /// <summary>Checks to see if the provided <see cref="fileName"/> contains a wild card (*)</summary>
@@ -474,9 +476,12 @@ namespace Raydreams.Common.Extensions
         }
 
         /// <summary>Custom string hasher that should the same results in every run</summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        /// <remarks>https://andrewlock.net/why-is-string-gethashcode-different-each-time-i-run-my-program-in-net-core/</remarks>
+        /// <param name="str">Some string to hash</param>
+        /// <returns>hash value as int</returns>
+        /// <remarks>
+        /// A bit of an example writing a good hash function
+        /// https://andrewlock.net/why-is-string-gethashcode-different-each-time-i-run-my-program-in-net-core/
+        /// </remarks>
         public static int GetDeterministicHashCode(this string str)
         {
             unchecked
@@ -487,8 +492,10 @@ namespace Raydreams.Common.Extensions
                 for (int i = 0; i < str.Length; i += 2)
                 {
                     hash1 = ((hash1 << 5) + hash1) ^ str[i];
+
                     if (i == str.Length - 1)
                         break;
+
                     hash2 = ((hash2 << 5) + hash2) ^ str[i + 1];
                 }
 

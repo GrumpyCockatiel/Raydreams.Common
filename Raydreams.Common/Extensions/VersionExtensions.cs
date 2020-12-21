@@ -2,7 +2,7 @@
 
 namespace Raydreams.Common.Extensions
 {
-	/// <summary></summary>
+	/// <summary>Extensions to the Version class</summary>
 	public static class VersionExtensions
 	{
 		/// <summary>Parses a decimal build date to a date time string</summary>

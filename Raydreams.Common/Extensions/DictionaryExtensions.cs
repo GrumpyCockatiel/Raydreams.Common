@@ -11,9 +11,12 @@ namespace Raydreams.Common.Extensions
 	/// <summary>Dictionary extensions</summary>
 	public static class DictionaryExtensions
 	{
-		/// <summary>Expands a distribution dictionary in the form value,occurances to a single int array</summary>
-        /// <param name="dist"></param>
-        /// <returns></returns>
+		/// <summary>Expands a distribution dictionary in the form value/occurances to a single int array</summary>
+        /// <param name="dist">The discretet distribution function as a dictionary</param>
+        /// <returns>integer array</returns>
+        /// <remarks>
+        /// So a dictionary in the fomat {1,2},{2,2},{3,1},{4,3} would expand to [1,1,2,2,3,4,4,4]
+        /// </remarks>
 		public static int[] FunctionExpando( this Dictionary<int, int> dist )
 		{
 			int len = dist.Sum( i => i.Value );

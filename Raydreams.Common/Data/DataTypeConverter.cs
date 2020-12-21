@@ -5,6 +5,7 @@ using MongoDB.Bson;
 namespace Raydreams.Common.Data
 {
     /// <summary>Static Functions to more robustly convert data types from a string to a specific data type.</summary>
+    /// <remarks>Add as necessary</remarks>
     public static class DataTypeConverter
 	{
 		/// <summary></summary>

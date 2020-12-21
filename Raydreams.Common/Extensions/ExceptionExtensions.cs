@@ -7,7 +7,7 @@ namespace Raydreams.Common.Extensions
 	{
 		/// <summary>Creates a verbose string message from an exception</summary>
 		/// <param name="exp">The exception itself</param>
-		/// <param name="includeStackTrace"></param>
+		/// <param name="includeStackTrace">True if you want the full stack trace, otherwise defaults to false</param>
 		/// <returns></returns>
 		public static string ToLogMsg(this System.Exception exp, bool includeStackTrace = false)
 		{
