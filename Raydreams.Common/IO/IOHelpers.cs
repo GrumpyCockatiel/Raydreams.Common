@@ -13,11 +13,14 @@ namespace Raydreams.Common.IO
 	{
 		#region [ Methods ]
 
+		/// <summary>Path to the user's desktop folder</summary>
+		public static readonly string DesktopPath = Environment.GetFolderPath( Environment.SpecialFolder.DesktopDirectory );
+
 		/// <summary>Shortcut helper to get the latest file that uses a string in and out instead of an IO object.</summary>
 		/// <param name="path">INput directory path to search</param>
 		/// <param name="fileFilter">Any file filter to use on the files. Will default to wildcard * to match anything.</param>
 		/// <returns>The full file path to the latest file that matches the input filter</returns>
-        /// <remarks>See the DiretoryInfo Extensions for more specific version. This is just a string in/out helper.</remarks>
+		/// <remarks>See the DiretoryInfo Extensions for more specific version. This is just a string in/out helper.</remarks>
 		public static string LatestFile( string path, string fileFilter )
 		{
 			DirectoryInfo dir = new DirectoryInfo( path );

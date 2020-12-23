@@ -38,8 +38,8 @@ namespace Raydreams.Common.IO
 
 		#region [ Constructors ]
 
-		/// <summary></summary>
-		/// <param name="parser"></param>
+		/// <summary>Constructor</summary>
+		/// <param name="parser">The line parser to use to split a string into fields. Usually CSV</param>
 		public DataFileReader( TextLineParser parser )
 		{
 			this.LineReader = parser;
@@ -49,28 +49,29 @@ namespace Raydreams.Common.IO
 
 		#region [ Properties ]
 
-		/// <summary></summary>
+		/// <summary>The line parsing function</summary>
 		public TextLineParser LineReader { get; set; }
 
-		/// <summary>Event for after a new IO line is read</summary>
+		/// <summary>Event handler for after a line is read</summary>
 		public event ReadRecord<T> ReadCSVLine;
 
 		#endregion [ Properties ]
 
 		#region [ Methods ]
 
-		/// <summary>Broadcast record read</summary>
+		/// <summary>Broadcast record read with its object value</summary>
 		/// <param name="e"></param>
 		protected virtual void OnNewLineRead( ReadEventArgs<T> e )
 		{
 			if ( this.ReadCSVLine != null )
 			{
-				int writes = this.ReadCSVLine( this, e );
+				_ = this.ReadCSVLine( this, e );
 			}
 		}
 
-		/// <summary>Open the output file</summary>
+		/// <summary>Read an entire file from the specified path</summary>
 		/// <param name="path">Full file path to the CSV file to read</param>
+        /// <param name="context">Use a specific context specified on the object properties</param>
 		/// <param name="hasHeader">Is the first line a header record</param>
 		/// <returns>A list of object T</returns>
 		public List<T> Read( string path, string context = null, bool hasHeader = true )
@@ -122,7 +123,7 @@ namespace Raydreams.Common.IO
 					for ( int i = 0; i < headers.Length; ++i )
 						rec.Add( headers[i], valuesCopy[i] );
 
-					// convert
+					// convert the dictionary to an object using the extension
 					T obj = DictionaryExtensions.SourceToObject<T>( rec, context );
 
 					// send the data to listeners along with the original data

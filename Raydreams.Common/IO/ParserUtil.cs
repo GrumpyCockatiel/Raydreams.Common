@@ -20,7 +20,7 @@ namespace Raydreams.Common.IO
 	/// <remarks>Any function that takes a single line in and returns an array field of strings</remarks>
 	public delegate string[] TextLineParser( string line );
 
-	/// <summary>A temp class for holding CSV specific helper utilities</summary>
+	/// <summary>A temp class for holding line parsing functions</summary>
 	public static class ParserUtil
 	{
 		/// <summary>Given a file path, sniffs the target to be either tabbed or CSV deliminated</summary>
@@ -121,7 +121,7 @@ namespace Raydreams.Common.IO
 		/// <summary>Parses a tabbed sinle line to an array of strings</summary>
 		/// <param name="line">The single line to process</param>
 		/// <returns>The fields as an array of strings</returns>
-		public static string[] TabbedLineReader( string line )
+		public static string[] TabLineReader( string line )
 		{
 			string[] values = line.Split( new char[] { '\t' }, StringSplitOptions.None );
 

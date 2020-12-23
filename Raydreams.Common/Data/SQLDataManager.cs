@@ -12,11 +12,6 @@ namespace Raydreams.Common.Data
 	/// You should always subclass this class.
     /// Automatic mapping for Updates is not yet supported so you will need to add those methods to the derived class and call Execute in this class.
     /// See the LogRepository for a basic example.
-	/// Precedence is determined by the RayProperty attribute on the Data Object class
-	/// If there are no attributes on any property AND no context passed then a straight PropertyName mapping used
-	/// If there are no attributes on any property BUT some context passed -> thats an error and return nothing
-	/// If no context is passed (null context) then only consider Properties with an equal empty or null Context value
-	/// If a context is passed then use only Properties in the matching context.
 	/// </remarks>
 	public abstract class SQLDataManager
 	{

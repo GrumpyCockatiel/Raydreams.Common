@@ -78,6 +78,17 @@ namespace Raydreams.Common.Extensions
 			if ( props.Length < 1 )
 				return null;
 
+			// check for adornment
+			bool marked = false;
+			foreach ( PropertyInfo prop in props )
+			{
+				if ( prop.GetCustomAttributes<RayPropertyAttribute>( false ).FirstOrDefault() != null)
+                {
+					marked = true;
+					break;
+				}
+			}
+
 			// cretae a new instance of T
 			T obj = new T();
 
@@ -90,14 +101,15 @@ namespace Raydreams.Common.Extensions
 
 				string value = null;
 
-				// if the context is null look for a property with this header name
-				if ( String.IsNullOrWhiteSpace( context ) )
+				// case 1 - if there are NO RayProperties defined at all then use a straight property map
+				if ( !marked && String.IsNullOrWhiteSpace( context ) )
 				{
 					// if the file contains the field
 					if ( values.Keys.Contains( prop.Name ) )
 						value = ( String.IsNullOrWhiteSpace( values[prop.Name] ) ) ? String.Empty : values[prop.Name].Trim();
 				}
-				else
+				// case 2
+				else if (marked && String.IsNullOrWhiteSpace( context ) )
 				{
 					// get the properties FieldMap attribute
 					List<RayPropertyAttribute> sources = prop.GetCustomAttributes<RayPropertyAttribute>( false ).ToList();
@@ -106,18 +118,27 @@ namespace Raydreams.Common.Extensions
 					if ( sources == null || sources.Count < 1 )
 						continue;
 
-					RayPropertyAttribute map = sources.Where( s => s.Context.Equals( context, StringComparison.Ordinal ) ).FirstOrDefault();
+					// get only null context sources
+					RayPropertyAttribute map = sources.Where( s => String.IsNullOrWhiteSpace( s.Context ) ).FirstOrDefault();
 
-					// the context does not match any attribute on the class
+					// no match or no source defined
 					if ( map == null || String.IsNullOrWhiteSpace( map.Source ) )
 						continue;
 
-					// does the source file have this field
+					// set the value field if the source file have this field
 					if ( values.Keys.Contains( map.Source ) )
 						value = ( String.IsNullOrWhiteSpace( values[map.Source] ) ) ? String.Empty : values[map.Source].Trim();
 				}
+				// case 3
+				else if ( marked && !String.IsNullOrWhiteSpace( context ) )
+                {
+					throw new System.Exception("Case not handled");
 
-				// use the source field to get the value from the dictionary
+					// get only null context sources
+					//RayPropertyAttribute map = sources.Where( s => s.Context.Equals( context, StringComparison.Ordinal ) ).FirstOrDefault();
+				}
+
+				// use the source field to get the value using string DataType Converters
 				if ( prop.PropertyType == typeof( string ) )
 				{
 					prop.SetValue( obj, value );
