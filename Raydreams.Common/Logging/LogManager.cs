@@ -28,8 +28,13 @@ namespace Raydreams.Common.Logging
 		/// <summary>Default category to specify infromative run information like starting and stopping.</summary>
 		public static readonly string RunCategory = "RunInfo";
 
+		/// <summary></summary>
 		private Dictionary<string, List<ILogger>> _routes = null;
+
+		/// <summary>The default logger</summary>
 		private ILogger _none = null;
+
+		/// <summary>The default source to set if none is specified</summary>
 		private string _src= null;
 
 		#region [ Constructors ]
@@ -78,7 +83,7 @@ namespace Raydreams.Common.Logging
 		#region [ Methods ]
 
 		/// <summary>Add a logging target to the specified category</summary>
-		/// <param name="category">Category to add to the specified logger</param>
+		/// <param name="category">Category to add to the specified logger that determines where the log is routed to</param>
 		public void AddTarget( string category, ILogger logger )
 		{
 			if ( String.IsNullOrWhiteSpace( category ) )
@@ -135,14 +140,14 @@ namespace Raydreams.Common.Logging
 				this.Default.Debug( message );
 		}
 
-		/// <summary></summary>
+		/// <summary>Log a simple message to the default logger</summary>
 		public void Log( string message, LogLevel level = LogLevel.Info )
 		{
 			if ( this.Default != null )
 				this.Default.Log( message, level );
 		}
 
-		/// <summary></summary>
+		/// <summary>Log to a specified logger with category</summary>
 		public void Log( string message, string category, LogLevel level = LogLevel.Info )
 		{
 			if ( String.IsNullOrWhiteSpace( category ) )
@@ -157,7 +162,7 @@ namespace Raydreams.Common.Logging
 			}
 		}
 
-		/// <summary></summary>
+		/// <summary>Log to a specified logger with category</summary>
 		public void Log( string message, string category, LogLevel level, params object[] args )
 		{
 			if ( String.IsNullOrWhiteSpace( category ) )
@@ -172,13 +177,13 @@ namespace Raydreams.Common.Logging
 			}
 		}
 
-		/// <summary></summary>
+		/// <summary>Log an exception to the default logger</summary>
 		public void Log( Exception exception )
 		{
 			this.Default.Log( exception );
 		}
 
-		/// <summary></summary>
+		/// <summary>Log an exception to the default logger</summary>
 		public void Log( Exception exp, params object[] args )
 		{
 			this.Default.Log( exp, args );
