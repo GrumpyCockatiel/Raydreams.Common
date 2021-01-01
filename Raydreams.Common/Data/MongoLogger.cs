@@ -29,9 +29,6 @@ namespace Raydreams.Common.Data
         /// <param name="src"></param>
 		public MongoLogger( string connStr, string db, string table, string src = null ) : base( connStr, db )
 		{
-			//if ( !String.IsNullOrWhiteSpace( connStr ) )
-				//this._dbConn = new MongoClient( connStr );
-
 			this.TableName = table;
 			this.Source = src;
 		}

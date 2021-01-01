@@ -4,7 +4,7 @@ using System.Net;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 
-namespace Raydreams.Common.Data.Azure
+namespace Raydreams.Common.Data
 {
     public class AzureTableRepository<T> where T : ITableEntity, new()
 	{

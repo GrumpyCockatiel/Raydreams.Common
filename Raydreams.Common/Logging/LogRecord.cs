@@ -6,7 +6,7 @@ using Newtonsoft.Json.Converters;
 using Raydreams.Common.Data;
 using Raydreams.Common.Logging;
 
-namespace Raydreams.Common.Model
+namespace Raydreams.Common.Logging
 {
     /// <summary>Object representing a log event record.</summary>
     [BsonIgnoreExtraElements]

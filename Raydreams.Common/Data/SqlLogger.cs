@@ -46,12 +46,6 @@ namespace Raydreams.Common.Logging
 
 		#region [Properties]
 
-		/// <summary>The DB connection</summary>
-		//public SqlConnection DBConnection
-		//{
-		//	get { return this._dbConn; }
-		//}
-
 		/// <summary>The name of the logging table</summary>
 		public string TableName
 		{

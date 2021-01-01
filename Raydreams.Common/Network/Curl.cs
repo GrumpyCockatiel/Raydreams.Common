@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 namespace Raydreams.Common.Network
 {
 	/// <summary>Wraps a web request object.</summary>
-	/// <remarks>So old but sitll useful</remarks>
+	/// <remarks>Really old and need of some updates</remarks>
 	public class Curl
 	{
 		#region [Fields]
@@ -82,7 +82,7 @@ namespace Raydreams.Common.Network
 
 		#region [Methods]
 
-		/// <summary>Retrieves a web page.</summary>
+		/// <summary>Retrieves a web page from the specified URL</summary>
 		/// <param name="url"></param>
 		public string Scrape()
 		{
