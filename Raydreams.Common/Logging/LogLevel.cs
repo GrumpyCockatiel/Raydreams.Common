@@ -1,6 +1,7 @@
 ﻿namespace Raydreams.Common.Logging
 {
 	/// <summary>Standard Log levels</summary>
+    /// <remarks>Set a minium log level to compare log instances to to see if they are captured</remarks>
 	public enum LogLevel
 	{
 		/// <summary>Turns on All Logging</summary>

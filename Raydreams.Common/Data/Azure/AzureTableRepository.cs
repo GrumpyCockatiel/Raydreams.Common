@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 
@@ -9,8 +10,10 @@ namespace Raydreams.Common.Data.Azure
 	{
 		#region [Fields]
 
+		/// <summary></summary>
 		private string _connStr = String.Empty;
 
+		/// <summary></summary>
 		private string _table = String.Empty;
 
 		#endregion [Fields]
@@ -49,9 +52,9 @@ namespace Raydreams.Common.Data.Azure
 
 		#endregion [Properties]
 
-		/// <summary>Gets ALL the markers in the table</summary>
+		/// <summary>Get all the items in the table with no filter at this time</summary>
 		/// <returns></returns>
-		public List<T> GetAll()
+		public List<T> List()
 		{
 			TableQuerySegment<T> results = null;
 			TableContinuationToken tok = new TableContinuationToken();
@@ -60,7 +63,8 @@ namespace Raydreams.Common.Data.Azure
 			return results.Results;
 		}
 
-		/// <summary>Updates a single product item</summary>
+		/// <summary>Updates a single item in the table</summary>
+        /// <returns>The HTTP Status Code response code.</returns>
 		public int Update( T item )
 		{
 			if ( item == null )
@@ -72,10 +76,37 @@ namespace Raydreams.Common.Data.Azure
 			return results.HttpStatusCode;
 		}
 
-		/// <summary></summary>
-		/// <param name="items"></param>
+		/// <summary>Insert a single item</summary>
+		/// <param name="item">The item to insert</param>
+		/// <returns>The HTTP Status Code response code.</returns>
+		public int Insert( T item )
+		{
+			if ( item == null )
+				return (int)HttpStatusCode.BadRequest;
+
+			TableResult results = null;
+
+			try
+			{
+				TableOperation op = TableOperation.InsertOrMerge( item );
+				results = this.AzureTable.ExecuteAsync( op ).GetAwaiter().GetResult();
+			}
+			catch ( System.Exception exp )
+			{
+				; // log it somehow and keep going
+			}
+			
+			return results.HttpStatusCode;
+		}
+
+		/// <summary>Inserts a list of items into the table</summary>
+		/// <param name="items">Items to insert in bulk</param>
+		/// <returns>The HTTP Status Code response code.</returns>
 		public int Insert( List<T> items )
 		{
+			if ( items == null || items.Count < 1)
+				return (int)HttpStatusCode.BadRequest;
+
 			TableResult results = null;
 
 			foreach ( T item in items )

@@ -12,15 +12,15 @@ namespace Raydreams.Common.Security
     /// <summary>Handles serializing and deserilaizing session tokens</summary>
     public interface ITokenManager
     {
-        /// <summary></summary>
+        /// <summary>Decode a token back to its object</summary>
+        /// <param name="payload">The possibly encrypted token string</param>
+        /// <returns>The decrypted token</returns>
+        public TokenPayload Decode( string payload );
+
+        /// <summary>Encode a token object into a string using some concrete encryption</summary>
         /// <param name="token"></param>
         /// <returns></returns>
         public string Encode( TokenPayload token );
-
-        /// <summary>Delegate function used to decode a token</summary>
-        /// <param name="token">The possibly encrypted token string</param>
-        /// <returns>The decrypted token</returns>
-        public TokenPayload Decode( string token );
     }
 
 }

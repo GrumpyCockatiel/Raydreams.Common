@@ -1,6 +1,6 @@
 ﻿namespace Raydreams.Common.Logging
 {
-	/// <summary>Enumerates states in which the application ended.</summary>
+	/// <summary>Enumerates various reasons why an application ended.</summary>
 	public enum ExitStatus
 	{
 		/// <summary>Exited normally</summary>

@@ -111,9 +111,9 @@ namespace Raydreams.Common.Security
 			return msg;
 		}
 
-		/// <summary>Encrypt plain text with a known key</summary>
-        /// <param name="plainText"></param>
-        /// <param name="key"></param>
+		/// <summary>Encrypt plain text with a known key but generate an IV</summary>
+        /// <param name="plainText">text to encrypt</param>
+        /// <param name="key">encryption key to use</param>
         /// <returns>Encrypted bytes and the IV generated</returns>
 		public CipherMessage Encrypt( string plainText, byte[] key )
         {

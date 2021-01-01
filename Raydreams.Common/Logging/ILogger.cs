@@ -32,27 +32,6 @@ namespace Raydreams.Common.Logging
 		void Log( Exception exp, params object[] args );
 	}
 
-	///// <summary>A log object that holds all the parameters of a standard log message</summary>
-	//public class Log
-	//{
-	//	public Log( LogLevel level )
-	//	{
-	//		this.Level = level;
-	//	}
-
-	//	public Log() : this(LogLevel.Info)
-	//	{
-	//	}
-
-	//	public string Message { get; set; }
-
-	//	public string Category { get; set; }
-
-	//	public LogLevel Level { get; set; }
-
-	//	public object[] Args { get; set; }
-	//}
-
 	/// <summary>Converts an exception to a log object</summary>
 	public class ExceptionLog : LogRecord
 	{

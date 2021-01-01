@@ -3,7 +3,7 @@ using Raydreams.Common.Model;
 
 namespace Raydreams.Common.Logging
 {
-	/// <summary></summary>
+	/// <summary>Null Logger to set a logger that does nothing</summary>
 	public class NullLogger : ILogger
 	{
 		#region [ Fields ]
@@ -39,36 +39,43 @@ namespace Raydreams.Common.Logging
 
 		#region [ Methods ]
 
+		/// <summary></summary>
 		public void Debug( string message )
 		{
 			;
 		}
 
+		/// <summary></summary>
 		public void Log(LogRecord message )
 		{
 			;
 		}
 
+		/// <summary></summary>
 		public void Log( Exception exception )
 		{
 			;
 		}
 
+		/// <summary></summary>
 		public void Log( Exception exp, params object[] args )
 		{
 			;
 		}
 
+		/// <summary></summary>
 		public void Log( string message, LogLevel level = LogLevel.Info )
 		{
 			;
 		}
 
+		/// <summary></summary>
 		public void Log( string message, string category, LogLevel level = LogLevel.Info )
 		{
 			;
 		}
 
+		/// <summary></summary>
 		public void Log( string message, string category, LogLevel level, params object[] args )
 		{
 			;
