@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace Raydreams.Common.Data
 {
-    /// <summary></summary>
+    /// <summary>Extension to DbConnection</summary>
     public static class DbConnectionExtensions
     {
         /// <summary>Tests a SQL Connection to see if it can connect to the DB.</summary>
@@ -38,7 +38,7 @@ namespace Raydreams.Common.Data
         }
     }
 
-    /// <summary></summary>
+    /// <summary>Extension to DataRow</summary>
 	public static class DataRowExtensions
     {
         /// <summary>Turns a DataRow into a StringDictionary of key value pairs</summary>
@@ -87,7 +87,7 @@ namespace Raydreams.Common.Data
 			return obj;
 		}
 
-        /// <summary>Extension to SQL Data Reader to deal with reading string based fields.</summary>
+        /// <summary>Extension to DataRow to deal with reading string based fields.</summary>
         /// <param name="row"></param>
         /// <param name="colName"></param>
         /// <returns></returns>

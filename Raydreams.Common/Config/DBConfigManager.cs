@@ -6,8 +6,8 @@ using System.Data.SqlClient;
 
 namespace Raydreams.Common.Config
 {
-	/// <summary>Setting Manager handles loading all settings from a standard SQL DB table into a dictionary.</summary>
-	/// <remarks>You must explicitly call LoadAll or another load method. Refactor to use Setting Repository</remarks>
+	/// <summary>A Settings Manager handles loading all settings from a standard SQL DB table into a dictionary for a specific named apped.</summary>
+	/// <remarks>You must explicitly call LoadAll or another load method.</remarks>
 	public class DBConfigManager : IEnumerable<DBConfigValue>
 	{
 		#region [ Fields ]
@@ -23,7 +23,8 @@ namespace Raydreams.Common.Config
 
 		#region [ Constructor ]
 
-		/// <summary></summary>
+		/// <summary>Constructor</summary>
+        /// <param name="setTable">The name of the settings table</param>
 		public DBConfigManager(string appKey, string connStr, string setTable)
 		{
 			if (!String.IsNullOrWhiteSpace(appKey))
@@ -39,15 +40,13 @@ namespace Raydreams.Common.Config
 
 		#region [ Properties ]
 
-		/// <summary></summary>
+		/// <summary>The DB Connection to use</summary>
 		public SqlConnection DBConnection
 		{
 			get { return this._dbConn; }
 		}
 
-		/// <summary>
-		/// The number of values that are loaded.
-		/// </summary>
+		/// <summary>The number of values that are loaded.</summary>
 		public int Length
 		{
 			get { return this._settings.Count; }

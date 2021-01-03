@@ -40,14 +40,17 @@ namespace Raydreams.Common.Extensions
 			return new DateTimeOffset( a.Year, a.Month, 1, 0, 0, 0, new TimeSpan() );
 		}
 
+		/// <summary>Returns the very beginning of the next month from the specified month</summary>
+		/// <returns></returns>
+		/// <remarks>TZ is set to UTC</remarks>
 		public static DateTimeOffset FistOfNextMonth( int year, int month )
 		{
 			return FirstOfMonth(year, month).FistOfNextMonth();
 		}
 
-		/// <summary>Test two dates to see if they are on the same day.</summary>
-		/// <returns>True if year and day match, else false</returns>
-		/// <remarks>Does not check time zones or convert to UTC first.</remarks>
+		/// <summary>Returns the very beginning of the next month from the specified month</summary>
+		/// <returns></returns>
+        /// <remarks>TZ is set to UTC</remarks>
 		public static DateTimeOffset FistOfNextMonth( this DateTimeOffset a )
 		{
 			DateTimeOffset next = a.AddMonths( 1 );

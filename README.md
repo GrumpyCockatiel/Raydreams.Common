@@ -12,6 +12,28 @@ It's not meant for public consumption but you are welcome to look at it and use 
 
 At some point I may document it more thoughly - but probably not because it's really just for my own personal use for now.
 
+## SQLSchemaConfig
+
+SQL Schema Config can be used to specify SQL table and field names in an app.config file like:
+
+```
+  <SQLObjects>
+    <tables>
+      <table id="ContractorsTable" schema="dbo" object="Contractors" />
+      <table id="ConversionsTable" schema="meta" object="Conversions" />
+      <table id="CountryTable" schema="dbo" object="CountryCodes">
+        <columns>
+          <column id="CountryCodeCol" name="Code3" />
+          <column id="CountryNameCol" name="Name" />
+        </columns>
+      </table>
+      <table id="LocationTable" schema="dbo" object="SiteLocations" />
+      <table id="LogTable" schema="meta" object="Logs" />
+      <table id="NoActionsTable" schema="meta" object="NoActions" />
+    </tables>
+  </SQLObjects>
+```
+
 ## Raydreams.Common.Data
 
 Since most SQL to Object ORMs tend to be over bloated beasts (I'm looking at you Entity Framework), this was orginally written to be a simple adorn your Data Objects with atteibutes approach much like is find in the MongoDB driver or JSON drivers. However, the base condidtion is that it will simply try to map data fields to properties. Only adding the RayProprety attribute will override and use the attributes then.

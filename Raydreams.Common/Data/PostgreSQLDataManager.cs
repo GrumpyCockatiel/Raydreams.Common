@@ -6,7 +6,7 @@
 //using Npgsql;
 //using Npgsql.LegacyPostgis;
 
-// PostgreSQL is removed for now but it can easily be added back
+// PostgreSQL is removed for now but it can easily be added back since it too is SQL based
 
 //namespace Raydreams.Common.Data
 //{

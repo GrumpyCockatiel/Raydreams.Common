@@ -7,9 +7,9 @@ using Raydreams.Common.Extensions;
 
 namespace Raydreams.Common.Data
 {
-    /// <summary></summary>
+    /// <summary>A base data manager for SQLlite</summary>
     /// <remarks>Can we switch this to RayProperty</remarks>
-    public class SQLiteDataManager
+    public abstract class SQLiteDataManager
     {
         #region [Fields]
 

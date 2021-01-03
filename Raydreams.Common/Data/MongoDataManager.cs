@@ -28,6 +28,8 @@ namespace Raydreams.Common.Data
 	}
 
 	/// <summary>Base class for a Mongo DB Manager</summary>
+    /// <typeparam name="T">The entity object type</typeparam>
+    /// <typeparam name="P">The data type of the _id field</typeparam>
 	public abstract class MongoDataManager<T, P>
 	{
 		#region [Fields]

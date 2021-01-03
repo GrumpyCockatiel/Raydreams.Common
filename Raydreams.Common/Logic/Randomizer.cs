@@ -53,17 +53,18 @@ namespace Raydreams.Common.Logic
 		}
 
 		/// <summary>Init a random generator</summary>
-		/// <returns></returns>
-        private Random InitRandom()
+		/// <remarks>
+        /// There are multiple ways to generate a seed like
+		/// new Random( Guid.NewGuid().GetHashCode() );
+		/// </remarks>
+		private Random InitRandom()
         {
-			// new Random(Guid.NewGuid().GetHashCode());
-
-			// generate a random byte array
+			// generate a random seed to size of Int32
 			byte[] seed = new byte[4];
             new RNGCryptoServiceProvider().GetBytes(seed);
 
             // convert to an integer value
-            return new Random(BitConverter.ToInt32(seed, 0));
+            return new Random( BitConverter.ToInt32(seed, 0) );
         }
 
 		#endregion [Constructors]
