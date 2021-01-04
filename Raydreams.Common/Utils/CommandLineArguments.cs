@@ -6,13 +6,14 @@ using System.Text.RegularExpressions;
 
 namespace Raydreams.Common.Utilities
 {
-	/// <summary>Parses all the command line arguments into a dictionary.</summary>
+	/// <summary>Parses all the command line arguments into a dictionary</summary>
 	/// <example>
 	/// Valid parameters forms:
 	/// {-,/,--}param{ ,=,:}((",')value(",'))
 	/// Examples: -param1 value1 --param2 /param3:"Test-:-work" /param4=happy -param5 '--=nice=--'
 	/// </example>
 	/// <remarks>
+    /// Copied from:
 	/// From https://gist.github.com/shadowfox/5844284
 	/// </remarks>
 	public class CommandLineArguments : IEnumerable

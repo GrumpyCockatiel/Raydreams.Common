@@ -19,7 +19,8 @@ namespace Raydreams.Common.Security
 	}
 
 	/// <summary>Struct to contain the message, key and init vector of a symmetric encryption when the key and IV are chosen randomly.</summary>
-	/// <remarks>Use Convert.FromBase64String and Convert.ToBase64String to save the bytes as string data or hard code the bytes.
+	/// <remarks>
+    /// The class is really old an in new of an upate but still works as intended.
 	/// </remarks>
 	public struct CipherMessage
 	{

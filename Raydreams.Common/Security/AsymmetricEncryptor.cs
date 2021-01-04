@@ -4,13 +4,14 @@ using System.Text;
 
 namespace Raydreams.Common.Security
 {
-    /// <summary></summary>
+    /// <summary>Methods for handling asym encryption</summary>
     public static class AsymmetricEncryptor
     {
         /// <summary>Use padding</summary>
         public static bool OptimalAsymmetricEncryptionPadding = false;
 
         /// <summary>Encrypt text using a piblic key</summary>
+        /// <param name="publicXMLKey">The public and private keys in XML format</param>
         public static string Encrypt(string plainText, int keySize, string publicXMLKey)
         {
             // validate input

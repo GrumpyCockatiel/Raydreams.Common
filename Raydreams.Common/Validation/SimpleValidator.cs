@@ -13,8 +13,8 @@ namespace Raydreams.Common.Validation
 
 		/// <summary>Simply iterates over an instance and if the property is a string checks for Null or White Space only</summary>
 		/// <param name="obj"></param>
-		/// <returns></returns>
-		/// <remarks>Send an excludsion list to ignore</remarks>
+		/// <returns>If any string field is null or white space - returns false. Otherwise true</returns>
+		/// <remarks>Send an exclusion list to ignore</remarks>
 		public bool NotEmpty(T obj)
 		{
 			// get all the properties in the class

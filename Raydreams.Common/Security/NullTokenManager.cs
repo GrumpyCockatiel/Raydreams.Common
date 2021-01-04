@@ -24,7 +24,7 @@ namespace Raydreams.Common.Security
             return NullToken;
         }
 
-        /// <summary>Returns a legitimate looking token</summary>
+        /// <summary>Returns a legitimate looking token that will work in dev and test</summary>
         /// <param name="payload"></param>
         /// <returns></returns>
         public string Encode( TokenPayload payload = null )
