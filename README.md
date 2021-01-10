@@ -1,20 +1,22 @@
 # Raydreams.Common
 
-This is just a common C# .NET Core Library I have been using for years, changing and refactoring as needed.
+## Disclaimer
 
-Classes come and go as the .NET framework includes more stuff.
+This repo is not meant for public consumption but you are welcome to look at it and use/copy anything you see.
 
-I mainly use to connect to various data sources like SQL Server, SQLite, MongoDB and Azure since I hate using bloated ORMs like Entity Framework. The pattern I use here is super simple.
+At some point I may document it more thoughly and certainly add more unit tests - but for now it's really just for my own personal use.
 
-However, it also contains a lot of common code I use but it is in need of a lot of refactoring and clean-up.
+## Description
 
-It's not meant for public consumption but you are welcome to look at it and use anything you see.
+This is just a common C# .NET Core Library I started years ago, changing, adding to, refactoring as needed.
 
-At some point I may document it more thoughly - but probably not because it's really just for my own personal use for now.
+Classes have come and gone .NET framework includes more stuff or changes. I mean, Server Side Controls, SOAP and XML were all the rage when I started this.
+
+I mainly use to connect to various data sources like SQL Server, SQLite, MongoDB and Azure since I hate using bloated ORMs like Entity Framework. The pattern I use here is super simple, repeatable and easy to mock without any worries EF will break on its next version update. Seriously, if you are in love with EF you probably haven't been using it for very long.
 
 ## SQLSchemaConfig
 
-SQL Schema Config can be used to specify SQL table and field names in an app.config file like:
+SQL Schema Config can be used to inject physical SQL table and field names from something like app.config like:
 
 ```
   <SQLObjects>
@@ -34,9 +36,11 @@ SQL Schema Config can be used to specify SQL table and field names in an app.con
   </SQLObjects>
 ```
 
+It's mainly used with exe chron jobs.
+
 ## Raydreams.Common.Data
 
-Since most SQL to Object ORMs tend to be over bloated beasts (I'm looking at you Entity Framework), this was orginally written to be a simple adorn your Data Objects with atteibutes approach much like is find in the MongoDB driver or JSON drivers. However, the base condidtion is that it will simply try to map data fields to properties. Only adding the RayProprety attribute will override and use the attributes then.
+Since most SQL to Object ORMs tend to be over bloated beasts (I'm looking at you Entity Framework), this was orginally written to be a simple adorn your Data Objects with attributes approach much like is find in the MongoDB driver or JSON drivers. However, the base condidtion is that it will simply try to map data fields to properties. Only adding the RayProprety attribute will override and use the attributes then.
 
 It was also designed for multiple contexes because I was using the same DO for both input and output in data integration. An input source might be a CSV file where the output was SQL Server or maybe a tabbed file but with differnt field names.
 
@@ -109,3 +113,5 @@ public class TestRepository : SQLDataManager
 TestRepository repo = new TestRepository("myConnectionString", "[dbo].[Tests]");
 List<TestObject> results = repo.GetAll();
 ~~~~
+
+Right now there are some refactoring issues I have not fully tested because I've change the Attribute class a few times.
