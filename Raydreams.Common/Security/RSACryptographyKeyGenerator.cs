@@ -14,17 +14,18 @@ namespace Raydreams.Common.Security
     }
 
     /// <summary>Generates a new RSA public/private key pair in XML format to use with Asymmetric Encryptor</summary>
+    /// <remarks>Needs a lot of work but its a starting point</remarks>
     public class RSAKeyGenerator
     {
-        /// <summary>Public key created</summary>
+        /// <summary>Public key stored as XML</summary>
         public string PublicKey { get; set; }
 
-        /// <summary>Private Key Created</summary>
+        /// <summary>Private Key stored as XML</summary>
         public string PrivateKey { get; set; }
 
-        /// <summary>Generate a pair of keys</summary>
-        /// <param name="keySize"></param>
-        /// <param name="withKeySize">Prefix with the key size in front of the XML string</param>
+        /// <summary>Generate a pair of keys and saves the as XML then BASE64 encoded</summary>
+        /// <param name="keySize">A valid RSA key size</param>
+        /// <param name="withKeySize">Add the key size as metadata in front of the key as XML string</param>
         /// <returns>key size</returns>
         public int GenerateKeys(RSAKeySize keySize, bool withKeySize = true)
         {
@@ -35,13 +36,15 @@ namespace Raydreams.Common.Security
 
             using (var provider = new RSACryptoServiceProvider(ks))
             {
+                // export parameters is probably a better choice over XML - then we can store the parts as desired
                 this.PublicKey = provider.ToXmlString(false);
                 this.PrivateKey = provider.ToXmlString(true);
 
+                // the key size is prefixed in front of the XML before it is all BASE64 encoded
                 if ( withKeySize )
                 {
-                    this.PublicKey = Convert.ToBase64String( Encoding.UTF8.GetBytes( ks.ToString() + "!" + this.PublicKey ) );
-                    this.PrivateKey = Convert.ToBase64String( Encoding.UTF8.GetBytes( ks.ToString() + "!" + this.PrivateKey ) );
+                    this.PublicKey = Convert.ToBase64String( Encoding.UTF8.GetBytes( $"{ks}!{this.PublicKey}" ) );
+                    this.PrivateKey = Convert.ToBase64String( Encoding.UTF8.GetBytes( $"{ks}!{this.PrivateKey}" ) );
                 }
             }
 
@@ -74,7 +77,6 @@ namespace Raydreams.Common.Security
 
             return (keySize, xmlKey);
         }
-
 
     }
 }

@@ -4,11 +4,32 @@ using System.Text;
 
 namespace Raydreams.Common.Security
 {
-    /// <summary>Methods for handling asym encryption</summary>
+    /// <summary>Methods for handling asym encryption using RSA keys</summary>
     public static class AsymmetricEncryptor
     {
         /// <summary>Use padding</summary>
         public static bool OptimalAsymmetricEncryptionPadding = false;
+
+        /// <summary>Signs a byte array with the specified private key</summary>
+        /// <param name="data"></param>
+        /// <param name="keySize"></param>
+        /// <param name="publicXMLKey">The key pair in XML format</param>
+        /// <returns></returns>
+        public static byte[] SignWithRSA256( byte[] data, int keySize, string publicAndPrivateKeyXml )
+        {
+            if ( data == null || data.Length < 1 )
+                throw new ArgumentException( "Nothing to sign.", "data" );
+
+            // validate input
+            if ( !IsKeySizeValid( keySize ) )
+                throw new ArgumentException( "Key size is not valid", "keySize" );
+
+            using var provider = new RSACryptoServiceProvider( keySize );
+            provider.FromXmlString( publicAndPrivateKeyXml );
+            byte[] sig = provider.SignData( data, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1 );
+
+            return sig;
+        }
 
         /// <summary>Encrypt text using a piblic key</summary>
         /// <param name="publicXMLKey">The public and private keys in XML format</param>
@@ -66,7 +87,7 @@ namespace Raydreams.Common.Security
             return ( ( keySize - 384 ) / 8 ) + 37;
         }
 
-        /// <summary></summary>
+        /// <summary>Test the keysize is correct value</summary>
         private static bool IsKeySizeValid(int keySize)
         {
             return keySize >= 384 && keySize <= 16384 && keySize % 8 == 0;
