@@ -28,9 +28,11 @@ namespace Raydreams.Common.Tests
 
             var data = new byte[] { 0x00, 0x34, 0x56, 0x19 };
 
-            byte[] sig = AsymmetricEncryptor.SignWithRSA256( data, size, gen.PrivateKey );
+            byte[] sig = AsymmetricEncryptor.SignWithRSA256( data, gen.PrivateKey );
 
-            Assert.Inconclusive();
+            bool verified = AsymmetricEncryptor.VerifyRSA256( data, sig, gen.PublicKey );
+
+            Assert.IsTrue(verified);
         }
     }
 }

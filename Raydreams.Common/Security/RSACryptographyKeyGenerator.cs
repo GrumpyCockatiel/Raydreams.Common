@@ -37,6 +37,8 @@ namespace Raydreams.Common.Security
             using (var provider = new RSACryptoServiceProvider(ks))
             {
                 // export parameters is probably a better choice over XML - then we can store the parts as desired
+                RSAParameters sk = provider.ExportParameters( true );
+                RSAParameters pk = provider.ExportParameters( false );
                 this.PublicKey = provider.ToXmlString(false);
                 this.PrivateKey = provider.ToXmlString(true);
 
@@ -52,7 +54,7 @@ namespace Raydreams.Common.Security
         }
 
         /// <summary>Unwinds a key stored with its key size into a tuple of key size/XML key</summary>
-        /// <param name="rawkey">raw XML with key size prefix</param>
+        /// <param name="rawkey">raw XML with or without key size prefix</param>
         /// <returns></returns>
         public static (int KeySize, string XMLKey) GetKey(string rawkey)
         {

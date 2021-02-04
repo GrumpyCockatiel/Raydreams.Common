@@ -15,7 +15,7 @@ namespace Raydreams.Common.Security
         /// <param name="keySize"></param>
         /// <param name="publicXMLKey">The key pair in XML format</param>
         /// <returns></returns>
-        public static byte[] SignWithRSA256( byte[] data, int keySize, string publicAndPrivateKeyXml )
+        public static byte[] SignWithRSA256( byte[] data, string publicAndPrivateKeyXml, int keySize = 2048 )
         {
             if ( data == null || data.Length < 1 )
                 throw new ArgumentException( "Nothing to sign.", "data" );
@@ -29,6 +29,29 @@ namespace Raydreams.Common.Security
             byte[] sig = provider.SignData( data, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1 );
 
             return sig;
+        }
+
+        /// <summary></summary>
+        /// <param name="data"></param>
+        /// <param name="sig"></param>
+        /// <param name="publicXMLKey"></param>
+        /// <param name="keySize"></param>
+        /// <returns></returns>
+        public static bool VerifyRSA256( byte[] data, byte[] sig, string publicXMLKey, int keySize = 2048)
+        {
+            if ( data == null || data.Length < 1 )
+                throw new ArgumentException( "Nothing to verify.", "data" );
+
+            if ( sig == null || sig.Length < 1 )
+                throw new ArgumentException( "No signature", "sig" );
+
+            // validate input
+            if ( !IsKeySizeValid( keySize ) )
+                throw new ArgumentException( "Key size is not valid", "keySize" );
+
+            using var provider = new RSACryptoServiceProvider( keySize );
+            provider.FromXmlString( publicXMLKey );
+            return provider.VerifyData( data, sig, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1 );
         }
 
         /// <summary>Encrypt text using a piblic key</summary>
