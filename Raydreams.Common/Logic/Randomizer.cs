@@ -145,6 +145,21 @@ namespace Raydreams.Common.Logic
 			return max * this._rand.NextDouble();
 		}
 
+		/// <summary>Generate some random bytes</summary>
+		/// <remarks>Has a 1024 max limit for now</remarks>
+		public byte[] RandomBytes( int size )
+		{
+			if ( size < 1 )
+				size = 1;
+
+			if ( size > 1024 )
+				size = 1024;
+
+			byte[] b = new byte[size];
+			this._rand.NextBytes( b );
+			return b;
+		}
+
 		/// <summary>Chooses random points in a 2D matrix</summary>
 		/// <param name="width"></param>
 		/// <param name="height"></param>

@@ -23,6 +23,13 @@ namespace Raydreams.Common.Security
         /// <summary>Private Key stored as XML</summary>
         public string PrivateKey { get; set; }
 
+        //public void Load()
+        //{
+        //    RSA x = RSA.Create();
+        //    using var provider = new RSACryptoServiceProvider( 8 );
+        //    provider.ImportPkcs8PrivateKey
+        //}
+
         /// <summary>Generate a pair of keys and saves the as XML then BASE64 encoded</summary>
         /// <param name="keySize">A valid RSA key size</param>
         /// <param name="withKeySize">Add the key size as metadata in front of the key as XML string</param>
@@ -38,6 +45,7 @@ namespace Raydreams.Common.Security
             {
                 // export parameters is probably a better choice over XML - then we can store the parts as desired
                 RSAParameters sk = provider.ExportParameters( true );
+                // public key only contain the Modulus and Exponent
                 RSAParameters pk = provider.ExportParameters( false );
                 this.PublicKey = provider.ToXmlString(false);
                 this.PrivateKey = provider.ToXmlString(true);

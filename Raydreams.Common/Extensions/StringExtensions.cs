@@ -475,35 +475,40 @@ namespace Raydreams.Common.Extensions
             return hash;
         }
 
-        /// <summary></summary>
+        /// <summary>Encodes a byte array as BASE64 URL encoded</summary>
         public static string BASE64UrlEncode( byte[] arg )
         {
             string s = Convert.ToBase64String( arg ); // Regular base64 encoder
-            s = s.Split( '=' )[0]; // Remove any trailing '='s
+            //s = s.Split( '=' )[0];
+            s = s.TrimEnd( '=' ); // remove any trailing =
             s = s.Replace( '+', '-' ); // 62nd char of encoding
             s = s.Replace( '/', '_' ); // 63rd char of encoding
             return s;
         }
 
-        /// <summary></summary>
+        /// <summary>Decodes a BASE64 URL encoded string back to its original bytes</summary>
         /// <param name="arg"></param>
         /// <returns></returns>
-        public static byte[] BASE64UrlDecode( this string arg )
+        public static byte[] BASE64UrlDecode( this string str )
         {
-            string s = arg;
-            s = s.Replace( '-', '+' ); // 62nd char of encoding
-            s = s.Replace( '_', '/' ); // 63rd char of encoding
+            str = str.Replace( '-', '+' ); // 62nd char of encoding
+            str = str.Replace( '_', '/' ); // 63rd char of encoding
 
-            switch ( s.Length % 4 ) // Pad with trailing '='s
+            // the modulus of the length by 4 can not be remaninder 1
+            switch ( str.Length % 4 )
             {
-                case 0: break; // No pad chars in this case
-                case 2: s += "=="; break; // Two pad chars
-                case 3: s += "="; break; // One pad char
+                // no padding necessary
+                case 0: break;
+                // pad with two =
+                case 2: str += "=="; break;
+                // pad once
+                case 3: str += "="; break;
+                // hopefully this does not happen
                 default:
-                    throw new System.Exception( "Illegal base64url string!" );
+                    throw new System.Exception( "Illegal BASE64URL string!" );
             }
 
-            return Convert.FromBase64String( s ); // Standard base64 decoder
+            return Convert.FromBase64String( str ); // Standard base64 decoder
         }
 
         /// <summary>Custom string hasher that should the same results in every run</summary>
