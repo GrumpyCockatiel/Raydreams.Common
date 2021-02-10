@@ -16,7 +16,8 @@ namespace Raydreams.Common.Logic
 		Upper = 4,
 		LimitedSpecial = 8,
 		AllSpecial = 16,
-		NoSimilar = 32
+		NoSimilar = 32,
+		All = 64
 	};
 
     /// <summary>Class for generating all kinds of random things</summary>
@@ -89,15 +90,20 @@ namespace Raydreams.Common.Logic
 		{
 			List<char> all = new List<char>();
 
+			// add in digits
 			if ( (set & CharSet.Digits) == CharSet.Digits )
 				all.AddRange( Digits );
 
+			// add in lower case
 			if ( (set & CharSet.Lower) == CharSet.Lower )
 				all.AddRange( LowerCase );
 
+			// add in upper case
 			if ( (set & CharSet.Upper) == CharSet.Upper )
 				all.AddRange( UpperCase );
 
+			// add in all special chars
+			// if both limited and all are specified - then its still all
 			if ( (set & CharSet.AllSpecial) == CharSet.AllSpecial )
 			{
 				all.AddRange( LimitedSpecial );
@@ -106,7 +112,10 @@ namespace Raydreams.Common.Logic
 			else if ( (set & CharSet.LimitedSpecial) == CharSet.LimitedSpecial )
 				all.AddRange( LimitedSpecial );
 
-			if ( (set & CharSet.NoSimilar) == CharSet.NoSimilar )
+			// if at this point it's empty then nothing was specified
+
+			// remove similars
+			if ( all.Count > 0 && (set & CharSet.NoSimilar) == CharSet.NoSimilar )
 			{
 				return all.Except( Similar ).ToArray();
 			}
@@ -203,6 +212,9 @@ namespace Raydreams.Common.Logic
 				len = 1024;
 
 			char[] chars = this.MakeCharSet(set);
+
+			if ( chars.Length < 1 )
+				return String.Empty;
 
 			StringBuilder results = new StringBuilder();
 
