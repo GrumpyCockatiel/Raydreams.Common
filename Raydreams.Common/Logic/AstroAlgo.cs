@@ -9,8 +9,8 @@ namespace Raydreams.Common.Logic
     public static class AstroAlgo
     {
         /// <summary>Degrees to Radians conversion factor.</summary>
-        public static readonly double Deg2Radian = Math.PI / 180.0;
-        public static readonly double Radian2Deg = 180.0 / Math.PI;
+        public const double Deg2Radian = Math.PI / 180.0;
+        public const double Radian2Deg = 180.0 / Math.PI;
 
         public enum MoonPhase : byte
         {
@@ -813,7 +813,7 @@ namespace Raydreams.Common.Logic
         }
 
         /// <summary>Returns a TimeSpan from an input number of fractional days.  Same as TimeSpan.FromDays()</summary>
-        /// <param name="x">Fractional days.</param>
+        /// <param name="x">Fractional days</param>
         public static TimeSpan Fraction2Time(double x)
         {
             // obtain the fractional part of the input
