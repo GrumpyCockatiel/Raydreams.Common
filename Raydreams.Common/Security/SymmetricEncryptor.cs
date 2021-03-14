@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Raydreams.Common.Security
 {
-	/// <summary>Symmetric encryption algorithms</summary>
+	/// <summary>Enumerate the standard encryption algorithm types</summary>
 	public enum SymmetricAlgoType : byte
 	{
 		/// <summary>AES (aka Rijndael) encryption.</summary>
@@ -24,7 +24,7 @@ namespace Raydreams.Common.Security
 	/// </remarks>
 	public struct CipherMessage
 	{
-		/// <summary></summary>
+		/// <summary>The encrypted bytes</summary>
 		public byte[] CipherBytes { get; set; }
 
 		/// <summary>the original key bytes</summary>
@@ -35,6 +35,11 @@ namespace Raydreams.Common.Security
 	}
 
 	/// <summary>Encrypt and decrypt strings using symmetric algorithms</summary>
+	/// <remarks>
+	/// This was written back when people still used DES and TripleDES regularly.
+	/// To be deprecated for JUST AES
+	/// For AES, the legal key sizes are 128, 192, and 256 bits.
+	/// </remarks>
 	public class SymmetricEncryptor
 	{
 		#region [ Fields ]
@@ -46,33 +51,52 @@ namespace Raydreams.Common.Security
 
 		#region [ Constructors ]
 
-		/// <summary>Constructor</summary>
+		/// <summary>Constructor with some algorithm</summary>
 		public SymmetricEncryptor( SymmetricAlgoType algo )
 		{
 			this.CreateEncryptor( algo );
 		}
 
 		/// <summary>Selectes the correct algorithm to instantiate</summary>
-		/// <param name="type">The algorithm to use.</param>
+		/// <param name="type">The algorithm to use</param>
 		private void CreateEncryptor( SymmetricAlgoType type )
 		{
-			if ( type == SymmetricAlgoType.AES )
-				this._algo = new RijndaelManaged();
-			else if ( type == SymmetricAlgoType.TripleDES )
-				this._algo = new TripleDESCryptoServiceProvider();
-			else if ( type == SymmetricAlgoType.RC2 )
-				this._algo = new RC2CryptoServiceProvider();
-			else
-				this._algo = new DESCryptoServiceProvider();
+			// set up the encryptor
+			switch (type)
+            {
+				case SymmetricAlgoType.DES:
+					this._algo = new DESCryptoServiceProvider();
+					break;
+				case SymmetricAlgoType.TripleDES:
+					this._algo = new TripleDESCryptoServiceProvider();
+					break;
+				case SymmetricAlgoType.RC2:
+					this._algo = new RC2CryptoServiceProvider();
+					break;
+				case SymmetricAlgoType.AES:
+				default:
+					this._algo = new RijndaelManaged();
+					break;
+			}
 		}
 
-		#endregion [ Constructors ]
+        #endregion [ Constructors ]
 
-		/// <summary>Get the legal key sizes of the instantiated algorithm.</summary>
-		public KeySizes KeySizes
-		{
-			get { return this._algo.LegalKeySizes[0]; }
-		}
+        #region [ Properties ]
+
+        /// <summary>Get the legal key sizes of the instantiated algorithm.</summary>
+        public KeySizes KeySizes
+        {
+            get { return this.Algorithm.LegalKeySizes[0]; }
+        }
+
+		/// <summary>The encryptor</summary>
+		protected SymmetricAlgorithm Algorithm
+        {
+			get { return this._algo;  }
+        }
+
+		#endregion [ Properties ]
 
 		/// <summary>Generate an IV for the in use algorithm</summary>
 		public byte[] CreateIV()
@@ -134,6 +158,47 @@ namespace Raydreams.Common.Security
 
 			results.CipherBytes = this.Encrypt( plainText, results.Key, results.IV );
 
+			return results;
+		}
+
+		/// <summary>Encrypt JUST plain bytes with some key</summary>
+        /// <param name="data"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+		public CipherMessage Encrypt( byte[] data, byte[] key )
+        {
+			// validate arguments
+			if ( data == null || data.Length < 1 )
+				throw new System.ArgumentNullException( nameof( data ) );
+
+			// need better validation of the key size
+			if ( key == null || key.Length < 1 )
+				throw new System.ArgumentNullException( nameof( key ) );
+
+			// setup the algorithm
+			this.Algorithm.Mode = CipherMode.CBC;
+			//this.Algorithm.KeySize = 128;
+			//this.Algorithm.BlockSize = 128;
+			//this.Algorithm.FeedbackSize = 128;
+			//this.Algorithm.Padding = PaddingMode.Zeros;
+			this.Algorithm.GenerateIV();
+            this.Algorithm.Key = key;
+
+            CipherMessage results = new CipherMessage();
+
+			// create an encryptor
+			ICryptoTransform encryptor = this.Algorithm.CreateEncryptor( this.Algorithm.Key, this.Algorithm.IV );
+
+			using ( var ms = new MemoryStream() )
+			using ( var cs = new CryptoStream( ms, encryptor, CryptoStreamMode.Write ) )
+			{
+				cs.Write( data, 0, data.Length );
+				cs.FlushFinalBlock();
+
+				results.CipherBytes = ms.ToArray();
+			}
+
+			results.IV = this.Algorithm.IV;
 			return results;
 		}
 
@@ -257,12 +322,12 @@ namespace Raydreams.Common.Security
 			return plaintext;
 		}
 
-		/// <summary>Zeros out memory.</summary>
+		/// <summary>zero out memory</summary>
 		public void Clear()
 		{
 			// Clear the RijndaelManaged object.
-			if ( this._algo != null )
-				this._algo.Clear();
+			if ( this.Algorithm != null )
+				this.Algorithm.Clear();
 		}
 	}
 }
