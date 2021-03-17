@@ -234,7 +234,7 @@ namespace Raydreams.Common.Logic
             return String.Format("{0}{1}", str, this.RandomCode(minLen - str.Length));
         }
 
-        /// <summary>Ranomly replaces a single char in the string with a randomly picked one</summary>
+        /// <summary>Randomly replaces a single char in the string with a randomly picked one</summary>
         public string RandomReplace(string str)
         {
             int idx = this.NextRandom(0, str.Length);
