@@ -8,9 +8,7 @@
 				"Kilo","Lima","Mike","November","Oscar","Papa","Quebec","Romeo","Sierra","Tango","Uniform","Victor","Whiskey","X-ray",
 				"Yankee","Zulu"};
 
-		static NATO()
-		{
-		}
+		static NATO() { }
 
 		/// <summary>Returns the NATO alphabet list</summary>
 		public static string[] Values

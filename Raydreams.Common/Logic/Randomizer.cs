@@ -256,6 +256,90 @@ namespace Raydreams.Common.Logic
             return Math.PI * 2.0 * this._rand.NextDouble();
         }
 
+		/// <summary>Creates a random folio word like Zulu22</summary>
+		/// <returns></returns>
+		public string Folio()
+		{
+			string[] dictionary = Raydreams.Common.Model.NATO.Values;
+			string word = dictionary[this._rand.Next( dictionary.Length )];
+			return $"{word}{this.RandomInt( 10, 99 )}";
+		}
+
+		/// <summary>Creates a single sentenance of Lorem Ipsum</summary>
+		/// <param name="minWords"></param>
+		/// <param name="maxWords"></param>
+		/// <param name="caseAll"></param>
+		/// <returns></returns>
+		public string LoremIpsum( int minWords, int maxWords, bool caseFirst = false, bool caseAll = true )
+		{
+			string[] dictionary = Raydreams.Common.Model.LoremIpsum.Values;
+
+			StringBuilder result = new StringBuilder();
+
+			int words = this.RandomInt( minWords, maxWords );
+
+			for ( int w = 0; w < words; ++w )
+			{
+				string word = dictionary[this._rand.Next( dictionary.Length )];
+				result.Append( word );
+
+				if ( caseAll )
+					result[result.Length - word.Length] = Char.ToUpper( word[0] );
+				else if (caseFirst && w == 0)
+					result[0] = Char.ToUpper( word[0] );
+
+				result.Append( " " );
+			}
+
+			--result.Length;
+			return result.ToString();
+		}
+
+		/// <summary>Creates paragraphs of Lorem Ipsum</summary>
+		/// <param name="minWords"></param>
+		/// <param name="maxWords"></param>
+		/// <param name="minSentences"></param>
+		/// <param name="maxSentences"></param>
+		/// <param name="paras"></param>
+		/// <returns></returns>
+		public string LoremIpsumBody( int minWords, int maxWords, int minSentences, int maxSentences, int paras )
+		{
+			string[] dictionary = Raydreams.Common.Model.LoremIpsum.Values;
+
+			StringBuilder result = new StringBuilder();
+
+			for ( int p = 0; p < paras; ++p )
+			{
+				result.Append( "<div>" );
+
+				int sentences = this.RandomInt( minSentences, maxSentences );
+
+				for ( int s = 0; s < sentences; ++s )
+				{
+					int words = this.RandomInt( minWords, maxWords );
+
+					for ( int w = 0; w < words; ++w )
+					{
+						string word = dictionary[this._rand.Next( dictionary.Length )];
+						result.Append( word );
+
+						if ( w == 0 )
+							result[result.Length - word.Length] = Char.ToUpper( word[0] );
+
+						result.Append( " " );
+					}
+
+					--result.Length;
+					result.Append( ". " );
+				}
+
+				--result.Length;
+				result.Append( "</div>" );
+			}
+
+			return result.ToString();
+		}
+
 	}
 
 }
