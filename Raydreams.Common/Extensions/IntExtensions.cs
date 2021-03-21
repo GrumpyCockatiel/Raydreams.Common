@@ -4,8 +4,15 @@ namespace Raydreams.Common.Extensions
 {
     public static class IntExtensions
     {
+		/// <summary>Determines if an int is even or not</summary>
+		public static bool Even( this int x ) => ( x % 2 == 0 );
+
+		/// <summary>Determines if an int is odd or not</summary>
+		public static bool Odd( this int x ) => ( x % 2 != 0 );
+
 		/// <summary>Normalize Inclusive where default is min</summary>
 		/// <returns></returns>
+		/// <remarks>You can use Math.Clamp for this instead</remarks>
 		public static int Normalize(this int x, int min, int max)
         {
 			// swap check
@@ -47,6 +54,7 @@ namespace Raydreams.Common.Extensions
 		}
 
 		/// <summary>TZ must be [-12, 12] otherwise assume its UTC</summary>
+		/// <remarks>You can use Math.Clamp for this instead</remarks>
 		public static int NormalizeTZ(this int tz)
 		{
 			if (tz < -12)
@@ -59,6 +67,7 @@ namespace Raydreams.Common.Extensions
 		}
 
 		/// <summary>Normailizes a month integer to [1,12]</summary>
+		/// <remarks>You can use Math.Clamp for this instead</remarks>
 		public static int NormalizeMonth(this int month)
 		{
 			if (month < 1)
