@@ -22,6 +22,20 @@ namespace Raydreams.Common.Logic
     }
 
     /// <summary></summary>
+    /// <remarks>Trying to deprecate for PointF only</remarks>
+    public struct Point
+    {
+        public Point( double x, double y )
+        {
+            this.X = x;
+            this.Y = y;
+        }
+
+        public double X;
+        public double Y;
+    }
+
+    /// <summary></summary>
     public class Starfield
     {
         private Point _position = new Point(0, 0);

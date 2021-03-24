@@ -7,13 +7,13 @@ namespace Raydreams.Common.Logic
     /// <remarks>Uses PointF from System.Drawing which can be converted to SKPoint easily.</remarks>
 	public class Hexagon
     {
+        #region [ Fields ]
+
         /// <summary>The COS of 60 degrees</summary>
-        public static float COS60 => Convert.ToSingle( Math.Cos( 60.0 * Math.PI / 180.0 ) ); // .5
+        public static float COS60 = Angles.COS60;
 
         /// <summary>The SIN of 60 degrees</summary>
-        public static float SIN60 => Convert.ToSingle( Math.Sin( 60.0 * Math.PI / 180.0 ) ); // .8660
-
-        #region [ Fields ]
+        public static float SIN60 => Angles.SIN60;
 
         /// <summary></summary>
         private PointF _origin = new PointF( 0, 0 );
