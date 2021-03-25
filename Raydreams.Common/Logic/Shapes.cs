@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace Raydreams.Common.Logic
 {
-    /// <summary>Creates primitive shapes in System.Drawing</summary>
+    /// <summary>Creates primitive shapes in System.Drawing in which the size is specified in a radius of a circle in which they are trascribed.</summary>
     public class Shapes
 	{
         /// <summary>Creates a square inscribed inside the spefified circle of radius</summary>
@@ -61,16 +61,16 @@ namespace Raydreams.Common.Logic
 		/// <summary>Draws a hexagon</summary>
 		/// <param name="radius"></param>
 		/// <returns></returns>
-		public static Point[] Hexagon( double radius )
+		public static PointF[] Hexagon( float radius )
 		{
-			Point[] points = new Point[6];
+			PointF[] points = new PointF[6];
 
-			points[0] = new Point( radius * Angles.COS0, Angles.SIN0 );
-			points[1] = new Point( radius * Angles.COS60, radius * Angles.SIN60 );
-			points[2] = new Point( radius * Angles.COS120, radius * Angles.SIN120 );
-			points[3] = new Point( radius * Angles.COS180, radius * Angles.SIN180 );
-			points[4] = new Point( radius * Angles.COS240, radius * Angles.SIN240 );
-			points[5] = new Point( radius * Angles.COS300, Angles.SIN300 );
+			points[0] = new PointF( radius * Angles.COS0, Angles.SIN0 );
+			points[1] = new PointF( radius * Angles.COS60, radius * Angles.SIN60 );
+			points[2] = new PointF( radius * Angles.COS120, radius * Angles.SIN120 );
+			points[3] = new PointF( radius * Angles.COS180, radius * Angles.SIN180 );
+			points[4] = new PointF( radius * Angles.COS240, radius * Angles.SIN240 );
+			points[5] = new PointF( radius * Angles.COS300, Angles.SIN300 );
 
 			return points;
 		}

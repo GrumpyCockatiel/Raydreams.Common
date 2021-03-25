@@ -79,6 +79,7 @@ namespace Raydreams.Common.Logic
         }
 
         /// <summary>The height of the hex</summary>
+        /// <remarks>Will recalc if set</remarks>
         public float Height
         {
             get { return 2.0F * this.Radius * SIN60; }
@@ -92,6 +93,7 @@ namespace Raydreams.Common.Logic
         }
 
         /// <summary>The length of an edge</summary>
+        /// <remarks>Will recalc if set</remarks>
         public float Side
         {
             get { return 2.0F * this.Radius * COS60; }
@@ -101,7 +103,7 @@ namespace Raydreams.Common.Logic
             }
         }
 
-        /// <summary>the arm the perpendicular distance from a vertex to the border of the inscribed rect</summary>
+        /// <summary>the arm is the perpendicular distance from a left or right vertices to the border of the inscribed rect</summary>
         public float Arm => this.Radius - ( this.Side / 2.0F );
 
         /// <summary>The number of sides which should always be 6 for a hexagon</summary>

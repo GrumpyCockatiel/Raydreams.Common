@@ -21,23 +21,23 @@ namespace Raydreams.Common.Logic
         { get { return this._max; } }
     }
 
-    /// <summary></summary>
-    /// <remarks>Trying to deprecate for PointF only</remarks>
-    public struct Point
-    {
-        public Point( double x, double y )
-        {
-            this.X = x;
-            this.Y = y;
-        }
-
-        public double X;
-        public double Y;
-    }
-
-    /// <summary></summary>
+    /// <summary>This is really a star in a starfield and not the entire collection</summary>
     public class Starfield
     {
+        /// <summary></summary>
+        /// <remarks>Trying to deprecate for PointF only</remarks>
+        public struct Point
+        {
+            public Point( double x, double y )
+            {
+                this.X = x;
+                this.Y = y;
+            }
+
+            public double X;
+            public double Y;
+        }
+
         private Point _position = new Point(0, 0);
         private double _rad = 3.0;
         private double _dis = 256.0;
@@ -49,12 +49,14 @@ namespace Raydreams.Common.Logic
             this.InitLocation(r, z);
         }
 
+        /// <summary></summary>
         public Point CurrentPosition
         {
             get { return this._position; }
             set { this._position = value; }
         }
 
+        /// <summary></summary>
         public double Radius
         {
             get { return this._rad; }
@@ -69,7 +71,7 @@ namespace Raydreams.Common.Logic
             set { this._dis = value; }
         }
 
-        /// <summary</summary>
+        /// <summaryMove a point some distance in a field of view with a given FOV</summary>
         /// <param name="current">Current location.</param>
         /// <param name="fov">Focal length of the lens</param>
         /// <param name="distance">Z distance of the object. 0 means at the focal length away</param>
@@ -82,16 +84,22 @@ namespace Raydreams.Common.Logic
             return updated;
         }
 
-        /// <summary></summary>
+        /// <summary>Chooses a starting location for a start</summary>
         private void InitLocation(MinMaxPair r, MinMaxPair z)
         {
             Randomizer rand = new Randomizer();
 
+            // choose a size
             double radius = r.Min + (r.Max - r.Min) * rand.Generator.NextDouble();
+
+            // choose an angle position
             double polar = rand.RandomAngle();
+
+            // set the X,Y position
             this._position = new Point(radius * Math.Cos(polar), radius * Math.Sin(polar));
+
+            // set the Z position
             this._dis = z.Min + (z.Max - z.Min) * rand.Generator.NextDouble();
         }
-
     }
 }

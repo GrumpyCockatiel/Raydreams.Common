@@ -63,9 +63,9 @@ namespace Raydreams.Common.Logic
         public static float Rad2Deg( float rad ) => rad * Convert.ToSingle( 180.0F / Math.PI );
 
         /// <summary>Returns a point in cartesian coordinates from angle in radians</summary>
-        public static Point Transform(double radians, double radius )
+        public static PointF Transform(double radians, double radius )
         {
-            return new Point( radius * Math.Cos(radians), radius * Math.Sin(radians) );
+            return new PointF( Convert.ToSingle( radius * Math.Cos(radians) ), Convert.ToSingle( radius * Math.Sin(radians) ) );
         }
 
         /// <summary>Takes an angle in degrees and list of PointF and translates them</summary>
