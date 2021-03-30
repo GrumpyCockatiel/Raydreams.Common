@@ -38,7 +38,7 @@ namespace Raydreams.Common.Logic
         public static readonly float SIN45 = Convert.ToSingle( Math.Sin( 45.0 * Math.PI / 180.0 ) );
         public static readonly float SIN54 = Convert.ToSingle( Math.Sin( 54.0 * Math.PI / 180.0 ) );
         public static readonly float SIN60 = Convert.ToSingle( Math.Sin( 60.0 * Math.PI / 180.0 ) ); // .8660
-        public static readonly float SIN90 = 1.0F
+        public static readonly float SIN90 = 1.0F;
         public static readonly float SIN120 = Convert.ToSingle( Math.Sin( 120.0 * Math.PI / 180.0 ) );
         public static readonly float SIN126 = Convert.ToSingle( Math.Sin( 126.0 * Math.PI / 180.0 ) );
         public static readonly float SIN135 = Convert.ToSingle( Math.Sin( 135.0 * Math.PI / 180.0 ) );

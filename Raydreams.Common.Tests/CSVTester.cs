@@ -1,9 +1,21 @@
 ﻿using System;
+using System.ComponentModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Raydreams.Common.IO;
+using Raydreams.Common.Model;
 
 namespace Raydreams.Common.Tests
 {
+    public class TestClass
+    {
+        [JsonConverter( typeof( StringEnumConverter ) )]
+        [JsonProperty( "type" )]
+        [DefaultValue( EnvironmentType .Unknown)]
+        public EnvironmentType Type { get; set; }
+    }
+
     [TestClass]
     public class CSVTester
     {
@@ -18,6 +30,16 @@ namespace Raydreams.Common.Tests
             string[] results = ParserUtil.CSVLineReader( unquotedStrTest );
 
             Assert.IsTrue(results.Length > 0);
+        }
+
+        [TestMethod]
+        public void JsonSerializeTest()
+        {
+            string json = "{\"type\":2}";
+
+            TestClass results = JsonConvert.DeserializeObject<TestClass>( json );
+
+            Assert.IsNotNull( results );
         }
     }
 }
