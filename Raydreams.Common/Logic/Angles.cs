@@ -13,8 +13,8 @@ namespace Raydreams.Common.Logic
         public static readonly float COS45 = Convert.ToSingle( Math.Cos( 45.0 * Math.PI / 180.0 ) );
         public static readonly float COS54 = Convert.ToSingle( Math.Cos( 54.0 * Math.PI / 180.0 ) );
         public static readonly float COS60 = Convert.ToSingle( Math.Cos( 60.0 * Math.PI / 180.0 ) ); // 0.5
-        public static readonly float COS90 = Convert.ToSingle( Math.Cos( 90.0 * Math.PI / 180.0 ) );
-        public static readonly float COS120 = 0;
+        public static readonly float COS90 = 0;
+        public static readonly float COS120 = Convert.ToSingle( Math.Cos( 120.0 * Math.PI / 180.0 ) );
         public static readonly float COS126 = Convert.ToSingle( Math.Cos( 126.0 * Math.PI / 180.0 ) );
         public static readonly float COS135 = Convert.ToSingle( Math.Cos( 135.0 * Math.PI / 180.0 ) );
         public static readonly float COS150 = Convert.ToSingle( Math.Cos( 150.0 * Math.PI / 180.0 ) );
