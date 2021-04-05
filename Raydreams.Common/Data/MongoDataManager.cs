@@ -46,6 +46,7 @@ namespace Raydreams.Common.Data
 			MongoDefaults.GuidRepresentation = GuidRepresentation.Standard;
 			//if ( BsonSerializer.LookupSerializer<Guid>() == null )
 			//BsonSerializer.RegisterSerializer( new GuidSerializer( GuidRepresentation.Standard ) );
+			// BsonDefaults.GuidRepresentationMode = GuidRepresentationMode.V3;
 
 			if ( !String.IsNullOrWhiteSpace( connStr ) )
 				this._dbConn = new MongoClient( connStr );

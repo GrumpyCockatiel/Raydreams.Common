@@ -173,7 +173,7 @@ namespace Raydreams.Common.Logic
 		/// <summary>Chooses random points in a 2D matrix</summary>
 		/// <param name="width"></param>
 		/// <param name="height"></param>
-		/// <param name="density">Star density works best between .001 to .01 or .1% to 1%</param>
+		/// <param name="density">Percent of pixels [1-100]. Star density works best between .001 to .01 or .1% to 1%</param>
 		/// <returns></returns>
 		/// <remarks></remarks>
 		public Point[] RandomPoints(int width, int height, double density)
