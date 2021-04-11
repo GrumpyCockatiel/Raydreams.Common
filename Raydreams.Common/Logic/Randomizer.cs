@@ -171,11 +171,13 @@ namespace Raydreams.Common.Logic
 		}
 
 		/// <summary>Chooses random points in a 2D matrix</summary>
-		/// <param name="width"></param>
-		/// <param name="height"></param>
-		/// <param name="density">Percent of pixels [1-100]. Star density works best between .001 to .01 or .1% to 1%</param>
-		/// <returns></returns>
-		/// <remarks></remarks>
+		/// <param name="width">Width of the view in pixels</param>
+		/// <param name="height">Height of the view in pixels</param>
+		/// <param name="density">Percent of pixels [1%-100%].</param>
+		/// <returns>Array of randomly chosen points</returns>
+		/// <remarks>
+		/// Star density works best between .001 to .01 (.1% to 1%)
+		/// </remarks>
 		public Point[] RandomPoints(int width, int height, double density)
 		{
 			if (density <= 0.0)
@@ -245,6 +247,7 @@ namespace Raydreams.Common.Logic
         }
 
         /// <summary>A saving roll is the attribute value - the avg + some random value from [0,9]</summary>
+        /// <remarks>This is just an example</remarks>
         public int SavingRoll( int attr, int avg )
 		{
 			return attr - avg + this.RandomInt( 0, 9 );
@@ -257,11 +260,18 @@ namespace Raydreams.Common.Logic
             return Math.PI * 2.0 * this._rand.NextDouble();
         }
 
+		/// <summary>Generates a completely random color with Alpha = 255</summary>
+		public Color RandomColor()
+		{
+			// the max value is not included in the range
+			return Color.FromArgb( this.NextRandom( 0, 256 ), this.NextRandom( 0, 256 ), this.NextRandom( 0, 256 ) );
+		}
+
 		/// <summary>Creates a random folio word like Zulu22</summary>
 		/// <returns></returns>
 		public string Folio()
 		{
-			string[] dictionary = Raydreams.Common.Model.NATO.Values;
+			string[] dictionary = Model.NATO.Values;
 			string word = dictionary[this._rand.Next( dictionary.Length )];
 			return $"{word}{this.RandomInt( 10, 99 )}";
 		}

@@ -3,7 +3,7 @@
 <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <PackageId>raydreams.common</PackageId>
-    <PackageVersion>1.0.7.0</PackageVersion>
+    <PackageVersion>1.0.8.0</PackageVersion>
     <Authors>TAG Digital Studios</Authors>
     <Description>A miscellaneous library mainly used for abstracting data repositories.</Description>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -14,14 +14,14 @@
    <PackageProjectUrl>https://github.com/GrumpyCockatiel/Raydreams.Common</PackageProjectUrl>
    <Summary>A personal library</Summary>
    <Version>1.0.1.0</Version>
-   <PackageReleaseNotes>This is a personal library but you are welcome to use it.</PackageReleaseNotes>
-   <ReleaseVersion>1.0.7.*</ReleaseVersion>
+   <PackageReleaseNotes>Continuous additions, bug fixes and improvements.</PackageReleaseNotes>
+   <ReleaseVersion>1.0.8.*</ReleaseVersion>
 </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
-    <PackageReference Include="MongoDB.Driver" Version="2.12.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.12.2" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.113.7" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
     <PackageReference Include="SendGrid" Version="9.22.0" />
