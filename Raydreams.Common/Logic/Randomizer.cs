@@ -267,6 +267,16 @@ namespace Raydreams.Common.Logic
 			return Color.FromArgb( this.NextRandom( 0, 256 ), this.NextRandom( 0, 256 ), this.NextRandom( 0, 256 ) );
 		}
 
+		/// <summary>Returns one of the random enum value of enumbn type T</summary>
+		public T RandomEnum<T>()
+		{
+			Array values = Enum.GetValues( typeof( T ) );
+
+			int idx = this._rand.Next( values.Length-1 );
+
+			return (T)values.GetValue( idx );
+		}
+
 		/// <summary>Creates a random folio word like Zulu22</summary>
 		/// <returns></returns>
 		public string Folio()
