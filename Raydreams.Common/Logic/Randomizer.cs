@@ -270,11 +270,11 @@ namespace Raydreams.Common.Logic
 		/// <summary>Returns one of the random enum value of enumbn type T</summary>
 		public T RandomEnum<T>()
 		{
-			Array values = Enum.GetValues( typeof( T ) );
+			T[] values = (T[])Enum.GetValues( typeof( T ) );
 
-			int idx = this._rand.Next( values.Length-1 );
+			int idx = this._rand.Next( values.Length );
 
-			return (T)values.GetValue( idx );
+			return values[idx];
 		}
 
 		/// <summary>Creates a random folio word like Zulu22</summary>

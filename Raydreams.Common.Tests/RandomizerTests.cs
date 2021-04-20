@@ -21,6 +21,8 @@ namespace Raydreams.Common.Tests
             ES results3 = rand.RandomEnum<ES>();
             ES results4 = rand.RandomEnum<ES>();
             ES results5 = rand.RandomEnum<ES>();
+            ES results6 = rand.RandomEnum<ES>();
+            ES results7 = rand.RandomEnum<ES>();
 
             Assert.IsNotNull( results );
         }
