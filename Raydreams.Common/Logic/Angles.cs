@@ -13,7 +13,11 @@ namespace Raydreams.Common.Logic
         public static readonly float COS45 = Convert.ToSingle( Math.Cos( 45.0 * Math.PI / 180.0 ) );
         public static readonly float COS54 = Convert.ToSingle( Math.Cos( 54.0 * Math.PI / 180.0 ) );
         public static readonly float COS60 = Convert.ToSingle( Math.Cos( 60.0 * Math.PI / 180.0 ) ); // 0.5
+        public static readonly float COS75 = Convert.ToSingle( Math.Cos( 75.0 * Math.PI / 180.0 ) );
+        public static readonly float COS80 = Convert.ToSingle( Math.Cos( 80.0 * Math.PI / 180.0 ) );
         public static readonly float COS90 = 0;
+        public static readonly float COS100 = Convert.ToSingle( Math.Cos( 100.0 * Math.PI / 180.0 ) );
+        public static readonly float COS105 = Convert.ToSingle( Math.Cos( 105.0 * Math.PI / 180.0 ) );
         public static readonly float COS120 = Convert.ToSingle( Math.Cos( 120.0 * Math.PI / 180.0 ) );
         public static readonly float COS126 = Convert.ToSingle( Math.Cos( 126.0 * Math.PI / 180.0 ) );
         public static readonly float COS135 = Convert.ToSingle( Math.Cos( 135.0 * Math.PI / 180.0 ) );
@@ -24,7 +28,11 @@ namespace Raydreams.Common.Logic
         public static readonly float COS225 = Convert.ToSingle( Math.Cos( 225.0 * Math.PI / 180.0 ) );
         public static readonly float COS234 = Convert.ToSingle( Math.Cos( 234.0 * Math.PI / 180.0 ) );
         public static readonly float COS240 = Convert.ToSingle( Math.Cos( 240.0 * Math.PI / 180.0 ) );
+        public static readonly float COS255 = Convert.ToSingle( Math.Cos( 255.0 * Math.PI / 180.0 ) );
+        public static readonly float COS260 = Convert.ToSingle( Math.Cos( 260.0 * Math.PI / 180.0 ) );
         public static readonly float COS270 = 0;
+        public static readonly float COS280 = Convert.ToSingle( Math.Cos( 280.0 * Math.PI / 180.0 ) );
+        public static readonly float COS285 = Convert.ToSingle( Math.Cos( 285.0 * Math.PI / 180.0 ) );
         public static readonly float COS300 = Convert.ToSingle( Math.Cos( 300.0 * Math.PI / 180.0 ) );
         public static readonly float COS306 = Convert.ToSingle( Math.Cos( 306.0 * Math.PI / 180.0 ) );
         public static readonly float COS315 = Convert.ToSingle( Math.Cos( 315.0 * Math.PI / 180.0 ) );
@@ -38,7 +46,11 @@ namespace Raydreams.Common.Logic
         public static readonly float SIN45 = Convert.ToSingle( Math.Sin( 45.0 * Math.PI / 180.0 ) );
         public static readonly float SIN54 = Convert.ToSingle( Math.Sin( 54.0 * Math.PI / 180.0 ) );
         public static readonly float SIN60 = Convert.ToSingle( Math.Sin( 60.0 * Math.PI / 180.0 ) ); // .8660
+        public static readonly float SIN75 = Convert.ToSingle( Math.Sin( 75.0 * Math.PI / 180.0 ) );
+        public static readonly float SIN80 = Convert.ToSingle( Math.Sin( 80.0 * Math.PI / 180.0 ) );
         public static readonly float SIN90 = 1.0F;
+        public static readonly float SIN100 = Convert.ToSingle( Math.Sin( 100.0 * Math.PI / 180.0 ) );
+        public static readonly float SIN105 = Convert.ToSingle( Math.Sin( 105.0 * Math.PI / 180.0 ) );
         public static readonly float SIN120 = Convert.ToSingle( Math.Sin( 120.0 * Math.PI / 180.0 ) );
         public static readonly float SIN126 = Convert.ToSingle( Math.Sin( 126.0 * Math.PI / 180.0 ) );
         public static readonly float SIN135 = Convert.ToSingle( Math.Sin( 135.0 * Math.PI / 180.0 ) );
@@ -49,7 +61,11 @@ namespace Raydreams.Common.Logic
         public static readonly float SIN225 = Convert.ToSingle( Math.Sin( 225.0 * Math.PI / 180.0 ) );
         public static readonly float SIN234 = Convert.ToSingle( Math.Sin( 234.0 * Math.PI / 180.0 ) );
         public static readonly float SIN240 = Convert.ToSingle( Math.Sin( 240.0 * Math.PI / 180.0 ) );
+        public static readonly float SIN255 = Convert.ToSingle( Math.Sin( 255.0 * Math.PI / 180.0 ) );
+        public static readonly float SIN260 = Convert.ToSingle( Math.Sin( 260.0 * Math.PI / 180.0 ) );
         public static readonly float SIN270 = -1.0F;
+        public static readonly float SIN280 = Convert.ToSingle( Math.Sin( 280.0 * Math.PI / 180.0 ) );
+        public static readonly float SIN285 = Convert.ToSingle( Math.Sin( 285.0 * Math.PI / 180.0 ) );
         public static readonly float SIN300 = Convert.ToSingle( Math.Sin( 300.0 * Math.PI / 180.0 ) );
         public static readonly float SIN306 = Convert.ToSingle( Math.Sin( 306.0 * Math.PI / 180.0 ) );
         public static readonly float SIN315 = Convert.ToSingle( Math.Sin( 315.0 * Math.PI / 180.0 ) );
