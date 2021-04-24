@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Raydreams.Common.Extensions;
 
 namespace Raydreams.Common.Logic
 {
@@ -284,6 +285,20 @@ namespace Raydreams.Common.Logic
 			string[] dictionary = Model.NATO.Values;
 			string word = dictionary[this._rand.Next( dictionary.Length )];
 			return $"{word}{this.RandomInt( 10, 99 )}";
+		}
+
+		/// <summary>Creates a random YouTube style ID</summary>
+		/// <returns>Returns a ulong BASE64URL encoded e.g.(12226624147795986488) as OMiXC-Kxrak</returns>
+		public string YouTubeID()
+		{
+			// pick 8 random values for our byte array equal to a Unsigned Big Int
+			byte[] idbytes = this.RandomBytes( 8 );
+
+			// get the actual uint64 value
+			//ulong val = BitConverter.ToUInt64( idbytes, 0 );
+
+			// BASE64 URL encode the bytes
+			return StringExtensions.BASE64UrlEncode(idbytes);
 		}
 
 		/// <summary>Creates a single sentenance of Lorem Ipsum</summary>
