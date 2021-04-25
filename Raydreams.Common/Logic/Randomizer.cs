@@ -125,9 +125,9 @@ namespace Raydreams.Common.Logic
 			return all.ToArray();
 		}
 
-		/// <summary>Pick a random integer between [low, high] inclusive on both ends.</summary>
-		/// <param name="high">Highest possible includsive value</param>
-		/// <param name="low">Lowest possible includsive value</param>
+		/// <summary>Pick a random integer between [low, high] INCLUSIVE on both ends.</summary>
+		/// <param name="high">Highest possible inclusive value</param>
+		/// <param name="low">Lowest possible inclusive value</param>
 		public int RandomInt(int low, int high)
 		{
 			// answer is obvious
@@ -154,6 +154,25 @@ namespace Raydreams.Common.Logic
 				max = 0;
 
 			return max * this._rand.NextDouble();
+		}
+
+		/// <summary>Returns a random double from 0 to the max value exclusive [min, max)</summary>
+		/// <param name="max">Inclusive min value</param>
+		/// <param name="max">Exclusive max value</param>
+		/// <returns></returns>
+		public double RandomDouble( double min = 0, double max = 1 )
+		{
+			// swap if necessary
+			if ( min > max )
+			{
+				double temp = max;
+				max = min;
+				min = temp;
+			}
+
+			double range = max - min;
+
+			return min + ( range * this._rand.NextDouble() );
 		}
 
 		/// <summary>Generate some random bytes</summary>
@@ -184,7 +203,10 @@ namespace Raydreams.Common.Logic
 			if (density <= 0.0)
 				return new Point[0];
 
+			// calculate the density as a % of total pixels
 			int pixels = (int)Math.Floor(width * height * density);
+
+			// start a new array of points
 			Point[] pts = new Point[pixels];
 
 			for ( int i = 0; i < pts.Length; ++i)
@@ -268,6 +290,13 @@ namespace Raydreams.Common.Logic
 			return Color.FromArgb( this.NextRandom( 0, 256 ), this.NextRandom( 0, 256 ), this.NextRandom( 0, 256 ) );
 		}
 
+		/// <summary>Generates a completely random grey tone where all RGB values are the same</summary>
+		public Color RandomGray()
+		{
+			int value = this.NextRandom( 0, 256 );
+			return Color.FromArgb( value, value, value );
+		}
+
 		/// <summary>Returns one of the random enum value of enumbn type T</summary>
 		public T RandomEnum<T>()
 		{
@@ -280,11 +309,11 @@ namespace Raydreams.Common.Logic
 
 		/// <summary>Creates a random folio word like Zulu22</summary>
 		/// <returns></returns>
-		public string Folio()
+		public string Folio(int min = 10, int max = 99)
 		{
 			string[] dictionary = Model.NATO.Values;
 			string word = dictionary[this._rand.Next( dictionary.Length )];
-			return $"{word}{this.RandomInt( 10, 99 )}";
+			return $"{word}{this.RandomInt( min, max )}";
 		}
 
 		/// <summary>Creates a random YouTube style ID</summary>
