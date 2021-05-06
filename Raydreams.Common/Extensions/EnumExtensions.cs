@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Raydreams.Common.Extensions
 {
-	/// <summary>Senum extensions</summary>
+	/// <summary>Enum extensions</summary>
 	public static class EnumExtensions
 	{
 		/// <summary>Gets the <see cref="DescriptionAttribute"/> of the value, otherwise returns the string value of the value</summary>
