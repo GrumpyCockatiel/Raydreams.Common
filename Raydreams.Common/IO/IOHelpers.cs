@@ -45,22 +45,21 @@ namespace Raydreams.Common.IO
 			if ( !fi.Exists )
 				return data;
 
-			using ( StreamReader reader = new StreamReader( path, Encoding.UTF8 ) )
+			using StreamReader reader = new StreamReader(path, Encoding.UTF8);
+			
+			string next = null;
+
+			while ( ( next = reader.ReadLine() ) != null )
 			{
-				string next = null;
+				if ( String.IsNullOrWhiteSpace( next ) )
+					continue;
 
-				while ( ( next = reader.ReadLine() ) != null )
-				{
-					if ( String.IsNullOrWhiteSpace( next ) )
-						continue;
+				if ( trimLines )
+					next = next.Trim();
 
-					if (trimLines)
-						next = next.Trim();
-
-					data.Add( next );
-				}
+				data.Add( next );
 			}
-
+			
 			return data;
 		}
 
