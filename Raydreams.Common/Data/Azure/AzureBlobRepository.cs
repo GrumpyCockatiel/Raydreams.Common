@@ -43,8 +43,8 @@ namespace Raydreams.Common.Data
 
         #region [ Methods ]
 
-        /// <summary>Loads a file into a JSON wrapper conveted to BASE64</summary>
-        /// <param name="filePath"></param>
+        /// <summary>Reads a file into a JSON wrapper conveted to BASE64 from an actual physical file source</summary>
+        /// <param name="filePath">Local file path</param>
         /// <returns></returns>
         public static BinaryFileWrapper ReadFile( string filePath )
         {
@@ -94,6 +94,55 @@ namespace Raydreams.Common.Data
             exists = blob.Exists();
 
             return exists.Value;
+        }
+
+        /// <summary></summary>
+        /// <param name="containerName"></param>
+        /// <param name="blobName"></param>
+        /// <returns></returns>
+        public BinaryFileWrapper GetBlob( string containerName, string blobName )
+        {
+            BinaryFileWrapper results = new BinaryFileWrapper();
+
+            // validate input
+            if ( String.IsNullOrWhiteSpace( containerName ) || String.IsNullOrWhiteSpace( blobName ) )
+                return results;
+
+            containerName = containerName.Trim();
+            blobName = blobName.Trim();
+
+            // Get a reference to a share and then create it
+            BlobContainerClient container = new BlobContainerClient( this.ConnectionString, containerName );
+
+            // check the container exists
+            Response<bool> exists = container.Exists();
+            if ( !exists.Value )
+                return results;
+
+            // set options
+            BlobOpenReadOptions op = new BlobOpenReadOptions( false );
+
+            // read the blob to an array
+            BlobClient blob = container.GetBlobClient( blobName );
+            using Stream stream = blob.OpenRead( op );
+            byte[] data = new byte[stream.Length];
+            stream.Read( data, 0, data.Length );
+            stream.Close();
+
+            // convert to BASE64
+            results.Data = Convert.ToBase64String( data, Base64FormattingOptions.None );
+
+            // get the properties
+            BlobProperties props = blob.GetProperties().Value;
+
+            if ( props == null )
+                return results;
+            
+            results.ContentType = props.ContentType;
+            if ( props.Metadata.ContainsKey("filename") )
+                results.Filename = props.Metadata["filename"].ToString();
+            
+            return results;
         }
 
         /// <summary>Get a list of all blobs in the specified contaier</summary>
