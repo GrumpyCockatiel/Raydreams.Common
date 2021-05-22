@@ -43,27 +43,6 @@ namespace Raydreams.Common.Data
 
         #region [ Methods ]
 
-        /// <summary>Reads a file into a JSON wrapper conveted to BASE64 from an actual physical file source</summary>
-        /// <param name="filePath">Local file path</param>
-        /// <returns></returns>
-        public static BinaryFileWrapper ReadFile( string filePath )
-        {
-            BinaryFileWrapper results = new BinaryFileWrapper();
-
-            FileInfo info = new FileInfo( filePath );
-
-            if ( !info.Exists )
-                return results;
-
-            results.Filename = info.Name;
-            results.ContentType = MimeTypeMap.GetMimeType( info.Extension );
-
-            byte[] data = File.ReadAllBytes( filePath );
-            results.Data = Convert.ToBase64String( data, Base64FormattingOptions.None );
-
-            return results;
-        }
-
         /// <summary>Check to see if a blob already exists in the specified container</summary>
         /// <param name="containerName"></param>
         /// <param name="blobName">File or blob name to check for</param>
@@ -96,13 +75,13 @@ namespace Raydreams.Common.Data
             return exists.Value;
         }
 
-        /// <summary></summary>
+        /// <summary>Gets a blob from Azure Storage as just raw bytes with metadata</summary>
         /// <param name="containerName"></param>
         /// <param name="blobName"></param>
         /// <returns></returns>
-        public BinaryFileWrapper GetBlob( string containerName, string blobName )
+        public RawFileWrapper GetRawBlob( string containerName, string blobName )
         {
-            BinaryFileWrapper results = new BinaryFileWrapper();
+            RawFileWrapper results = new RawFileWrapper();
 
             // validate input
             if ( String.IsNullOrWhiteSpace( containerName ) || String.IsNullOrWhiteSpace( blobName ) )
@@ -125,22 +104,48 @@ namespace Raydreams.Common.Data
             // read the blob to an array
             BlobClient blob = container.GetBlobClient( blobName );
             using Stream stream = blob.OpenRead( op );
-            byte[] data = new byte[stream.Length];
-            stream.Read( data, 0, data.Length );
+            results.Data = new byte[stream.Length];
+            stream.Read( results.Data, 0, results.Data.Length );
             stream.Close();
-
-            // convert to BASE64
-            results.Data = Convert.ToBase64String( data, Base64FormattingOptions.None );
 
             // get the properties
             BlobProperties props = blob.GetProperties().Value;
 
             if ( props == null )
                 return results;
-            
+
             results.ContentType = props.ContentType;
-            if ( props.Metadata.ContainsKey("filename") )
+
+            // get a filename
+            if ( props.Metadata.ContainsKey( "filename" ) )
                 results.Filename = props.Metadata["filename"].ToString();
+            else
+                results.Filename = blob.Name;
+
+            return results;
+        }
+
+        /// <summary>Gets a blob from Azure Storage BASE64 encoded and wrapped in JSON</summary>
+        /// <param name="containerName"></param>
+        /// <param name="blobName"></param>
+        /// <returns></returns>
+        public JSONFileWrapper GetWrappedBlob( string containerName, string blobName )
+        {
+            JSONFileWrapper results = new JSONFileWrapper();
+
+            // get the blob
+            RawFileWrapper data = this.GetRawBlob( containerName, blobName );
+
+            // validate
+            if ( !data.IsValid )
+                return results;
+
+            // convert to BASE64
+            results.Data = Convert.ToBase64String( data.Data, Base64FormattingOptions.None );
+
+            // get the properties
+            results.ContentType = data.ContentType;
+            results.Filename = data.Filename;
             
             return results;
         }
@@ -176,38 +181,12 @@ namespace Raydreams.Common.Data
             return blobs;
         }
 
-        /// <summary>Loads a physical file from a local path</summary>
-        /// <param name="filePath"></param>
-        public void LoadImageFile( string filePath )
-        {
-            this.ImageFile = new MemoryStream();
-
-            var info = new FileInfo( filePath );
-
-            if ( !info.Exists )
-                return;
-
-            // need the orignal name and extension
-            //var attr = File.GetAttributes( filePath );
-            this.ContentType = MimeTypeMap.GetMimeType( info.Extension );
-            this.FileName = info.Name;
-
-            // read in the raw byets from a file
-            using ( FileStream file = new FileStream( filePath, FileMode.Open, FileAccess.Read ) )
-            {
-                file.CopyTo( this.ImageFile );
-            }
-
-            // reset the pointer
-            this.ImageFile.Position = 0;
-        }
-
         /// <summary>Uploads a blob from a FileWrapper instance</summary>
         /// <param name="file"></param>
         /// <param name="containerName">Container to load to</param>
         /// <param name="blobName">Optional blob name. Random will be assigned if null</param>
         /// <returns></returns>
-        public string UploadBlob( BinaryFileWrapper file, string containerName, string blobName = null )
+        public string UploadBlob( JSONFileWrapper file, string containerName, string blobName = null )
         {
             if ( file == null || !file.IsValid )
                 return null;
@@ -282,6 +261,53 @@ namespace Raydreams.Common.Data
 
             // return the used file name
             return blobName;
+        }
+
+        /// <summary>Loads a physical file from a local path</summary>
+        /// <param name="filePath"></param>
+        public void LoadImageFile( string filePath )
+        {
+            this.ImageFile = new MemoryStream();
+
+            var info = new FileInfo( filePath );
+
+            if ( !info.Exists )
+                return;
+
+            // need the orignal name and extension
+            //var attr = File.GetAttributes( filePath );
+            this.ContentType = MimeTypeMap.GetMimeType( info.Extension );
+            this.FileName = info.Name;
+
+            // read in the raw byets from a file
+            using ( FileStream file = new FileStream( filePath, FileMode.Open, FileAccess.Read ) )
+            {
+                file.CopyTo( this.ImageFile );
+            }
+
+            // reset the pointer
+            this.ImageFile.Position = 0;
+        }
+
+        /// <summary>Reads a file into a JSON wrapper conveted to BASE64 from an actual physical file source</summary>
+        /// <param name="filePath">Local file path</param>
+        /// <returns></returns>
+        public static JSONFileWrapper ReadFile( string filePath )
+        {
+            JSONFileWrapper results = new JSONFileWrapper();
+
+            FileInfo info = new FileInfo( filePath );
+
+            if ( !info.Exists )
+                return results;
+
+            results.Filename = info.Name;
+            results.ContentType = MimeTypeMap.GetMimeType( info.Extension );
+
+            byte[] data = File.ReadAllBytes( filePath );
+            results.Data = Convert.ToBase64String( data, Base64FormattingOptions.None );
+
+            return results;
         }
 
         #endregion [ Methods ]

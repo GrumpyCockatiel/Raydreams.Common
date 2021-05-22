@@ -8,9 +8,9 @@ At some point I may document it more thoughly and certainly add more unit tests 
 
 ## Description
 
-This is just a common C# .NET Core Library I started years ago, changing, adding to, refactoring as needed.
+This is just a common C# .NET Core Library I started years ago with .NET Framework, changing, adding to, refactoring as needed.
 
-Classes have come and gone .NET framework includes more stuff or changes. I mean, Server Side Controls, SOAP and XML were all the rage when I started this.
+Classes have come and gone as .NET framework includes more stuff or changes. I mean, Server Side Controls, SOAP and XML were all the rage when I started this.
 
 I mainly use to connect to various data sources like SQL Server, SQLite, MongoDB and Azure since I hate using bloated ORMs like Entity Framework. The pattern I use here is super simple, repeatable and easy to mock without any worries EF will break on its next version update. Seriously, if you are in love with EF you probably haven't been using it for very long.
 
@@ -114,4 +114,4 @@ TestRepository repo = new TestRepository("myConnectionString", "[dbo].[Tests]");
 List<TestObject> results = repo.GetAll();
 ~~~~
 
-Right now there are some refactoring issues I have not fully tested because I've change the Attribute class a few times.
+Right now there are some refactoring issues I have not fully tested because I've changed the Attribute class a few times.
