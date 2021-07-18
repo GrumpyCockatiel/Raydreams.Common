@@ -337,7 +337,7 @@ namespace Raydreams.Common.Logic
 		/// <returns></returns>
 		public string LoremIpsum( int minWords, int maxWords, bool caseFirst = false, bool caseAll = true )
 		{
-			string[] dictionary = Raydreams.Common.Model.LoremIpsum.Values;
+			string[] dictionary = Model.LoremIpsum.Values;
 
 			StringBuilder result = new StringBuilder();
 

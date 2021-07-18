@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 namespace Raydreams.Common.Model
 {
     /// <summary>Adds metadata to blob data</summary>
+    /// <remarks>The data is stored as a byte array</remarks>
     public class RawFileWrapper
     {
         /// <summary>Original filename which should include the extension</summary>
@@ -26,6 +27,7 @@ namespace Raydreams.Common.Model
     }
 
     /// <summary>Wraps a binary file in JSON with some basic info</summary>
+    /// <remarks>This is used to send back to a client over the pipe. Data is stored as an encoded string.</remarks>
     public class JSONFileWrapper
     {
         /// <summary>Original filename which should include the extension</summary>
