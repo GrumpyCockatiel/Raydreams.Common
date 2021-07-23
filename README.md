@@ -12,7 +12,7 @@ This is just a common C# .NET Core Library I started years ago with .NET Framewo
 
 Classes have come and gone as .NET framework includes more stuff or changes. I mean, Server Side Controls, SOAP and XML were all the rage when I started this.
 
-I mainly use to connect to various data sources like SQL Server, SQLite, MongoDB and Azure since I hate using bloated ORMs like Entity Framework. The pattern I use here is super simple, repeatable and easy to mock without any worries EF will break on its next version update. Seriously, if you are in love with EF you probably haven't been using it for very long.
+I mainly use to connect to various data sources like SQL Server, SQLite, MongoDB and Azure since I hate using bloated ORMs like Entity Framework. The pattern I use here is super simple, repeatable and easy to mock without any worries EF will break on its next version update. Seriously, if you are in love with EF you probably haven't been using it for very long. The base classes here use reflection to match up class properties with DB field names or CSV headers. The motivation came from having to do **tons** of batch imports/exports on a project for dozens of different sources, with the requirement that the header field names could be different for the same data field.
 
 ## SQLSchemaConfig
 
@@ -36,7 +36,7 @@ SQL Schema Config can be used to inject physical SQL table and field names from 
   </SQLObjects>
 ```
 
-It's mainly used with exe chron jobs.
+It's mainly used with exe chron jobs. It's just a simple way to specify a SQL Server schema and inject it at runtime.
 
 ## Raydreams.Common.Data
 
