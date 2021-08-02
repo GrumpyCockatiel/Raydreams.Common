@@ -78,7 +78,7 @@ namespace Raydreams.Common.Data
         /// <summary>Gets a blob from Azure Storage as just raw bytes with metadata</summary>
         /// <param name="containerName"></param>
         /// <param name="blobName"></param>
-        /// <returns></returns>
+        /// <returns>Wrapped raw bytes with some metadata</returns>
         public RawFileWrapper GetRawBlob( string containerName, string blobName )
         {
             RawFileWrapper results = new RawFileWrapper();
@@ -128,7 +128,7 @@ namespace Raydreams.Common.Data
         /// <summary>Gets a blob from Azure Storage BASE64 encoded and wrapped in JSON</summary>
         /// <param name="containerName"></param>
         /// <param name="blobName"></param>
-        /// <returns></returns>
+        /// <returns>The encoded blob with metadata</returns>
         public JSONFileWrapper GetWrappedBlob( string containerName, string blobName )
         {
             JSONFileWrapper results = new JSONFileWrapper();
@@ -263,8 +263,9 @@ namespace Raydreams.Common.Data
             return blobName;
         }
 
-        /// <summary>Loads a physical file from a local path</summary>
+        /// <summary>Loads a physical file from a local path into storage</summary>
         /// <param name="filePath"></param>
+        /// <remarks>This is a helper function to make it easier to load up files</remarks>
         public void LoadImageFile( string filePath )
         {
             this.ImageFile = new MemoryStream();
@@ -291,7 +292,7 @@ namespace Raydreams.Common.Data
 
         /// <summary>Reads a file into a JSON wrapper conveted to BASE64 from an actual physical file source</summary>
         /// <param name="filePath">Local file path</param>
-        /// <returns></returns>
+        /// <returns>Helper function</returns>
         public static JSONFileWrapper ReadFile( string filePath )
         {
             JSONFileWrapper results = new JSONFileWrapper();

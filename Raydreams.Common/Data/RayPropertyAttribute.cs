@@ -19,7 +19,7 @@ namespace Raydreams.Common.Data
 		Error = 0,
 		/// <summary>no context or attributes passed</summary>
 		PropertyName = 1,
-		/// <summary>no context passed, match on attributes with a no context defined</summary>
+		/// <summary>no context passed, match on attributes with no context defined</summary>
 		Null = 2,
 		/// <summary>exact attribute context match</summary>
 		Match = 3

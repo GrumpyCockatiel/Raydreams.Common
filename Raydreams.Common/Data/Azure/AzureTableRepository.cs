@@ -6,6 +6,8 @@ using Microsoft.WindowsAzure.Storage.Table;
 
 namespace Raydreams.Common.Data
 {
+	/// <summary>Base class for accessing Azure Table Storage</summary>
+    /// <typeparam name="T">The type stored in the table</typeparam>
     public class AzureTableRepository<T> where T : ITableEntity, new()
 	{
 		#region [Fields]
