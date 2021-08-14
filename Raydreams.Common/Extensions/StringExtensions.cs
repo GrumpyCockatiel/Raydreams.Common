@@ -295,7 +295,7 @@ namespace Raydreams.Common.Extensions
 			return sb.ToString();
 		}
 
-        /// <summary>Cleans a string of all non digit characters and collapses to a string with no spaces.</summary>
+        /// <summary>Removes all whitespace characters from the string.</summary>
         public static string RemoveSpaces(this string str)
         {
             StringBuilder temp = new StringBuilder();
