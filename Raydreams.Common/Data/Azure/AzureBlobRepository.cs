@@ -9,7 +9,7 @@ using Raydreams.Common.Model;
 
 namespace Raydreams.Common.Data
 {
-    /// <summary>Data manager with Azure Files and Blobs</summary>
+    /// <summary>Data manager with Azure Files and Blobs. For now mainly considers Blobs to be image files</summary>
     /// <remarks>Blob and Container names are CASE SENSITIVE</remarks>
     public class AzureBlobRepository
     {
@@ -26,16 +26,16 @@ namespace Raydreams.Common.Data
 
         #region [ Properties ]
 
-        /// <summary></summary>
+        /// <summary>Azure Storage connection string</summary>
         public string ConnectionString { get; set; } = String.Empty;
 
-        /// <summary>The file to upload as a binary stream</summary>
+        /// <summary>Used when uploading an image to storage</summary>
         public Stream ImageFile { get; set; }
 
-        /// <summary>MIME Type</summary>
+        /// <summary>Used when uploading an image to storage</summary>
         public string ContentType { get; set; }
 
-        /// <summary></summary>
+        /// <summary>Used when uploading an image to storage</summary>
         /// <remarks>May no longer need this property</remarks>
         public string FileName { get; set; }
 
@@ -76,8 +76,8 @@ namespace Raydreams.Common.Data
         }
 
         /// <summary>Gets a blob from Azure Storage as just raw bytes with metadata</summary>
-        /// <param name="containerName"></param>
-        /// <param name="blobName"></param>
+        /// <param name="containerName">container name</param>
+        /// <param name="blobName">blob name</param>
         /// <returns>Wrapped raw bytes with some metadata</returns>
         public RawFileWrapper GetRawBlob( string containerName, string blobName )
         {
@@ -126,8 +126,8 @@ namespace Raydreams.Common.Data
         }
 
         /// <summary>Gets a blob from Azure Storage BASE64 encoded and wrapped in JSON</summary>
-        /// <param name="containerName"></param>
-        /// <param name="blobName"></param>
+        /// <param name="containerName">container name</param>
+        /// <param name="blobName">blob name</param>
         /// <returns>The encoded blob with metadata</returns>
         public JSONFileWrapper GetWrappedBlob( string containerName, string blobName )
         {
@@ -150,11 +150,11 @@ namespace Raydreams.Common.Data
             return results;
         }
 
-        /// <summary>Get a list of all blobs in the specified contaier</summary>
-        /// <param name="containerName"></param>
-        /// <returns></returns>
+        /// <summary>Get a list of All blobs in the specified contaier</summary>
+        /// <param name="containerName">container name</param>
+        /// <returns>A list of blob names</returns>
         /// <remarks>Still need to determine what we need back for each blob</remarks>
-        public List<string> ListBlobs( string containerName )
+        public List<string> ListBlobs( string containerName, string pattern = null )
         {
             List<string> blobs = new List<string>();
 
@@ -170,9 +170,13 @@ namespace Raydreams.Common.Data
             if ( !exists.Value )
                 return new List<string>();
 
-            Pageable<BlobItem> results = container.GetBlobs();
+            Pageable<BlobItem> results = null;
+            if ( String.IsNullOrWhiteSpace( pattern ) )
+                results = container.GetBlobs();
+            else
+                results = container.GetBlobs( prefix : pattern.Trim() );
 
-            IEnumerator<BlobItem> enu = results.GetEnumerator();
+            IEnumerator<BlobItem> enu = results?.GetEnumerator();
             while ( enu.MoveNext() )
             {
                 blobs.Add( enu.Current.Name );
@@ -181,8 +185,8 @@ namespace Raydreams.Common.Data
             return blobs;
         }
 
-        /// <summary>Uploads a blob from a FileWrapper instance</summary>
-        /// <param name="file"></param>
+        /// <summary>Uploads a blob from a JSON FileWrapper instance</summary>
+        /// <param name="file">The JSON wrapper with the image bytes in BASE64</param>
         /// <param name="containerName">Container to load to</param>
         /// <param name="blobName">Optional blob name. Random will be assigned if null</param>
         /// <returns></returns>
@@ -191,16 +195,16 @@ namespace Raydreams.Common.Data
             if ( file == null || !file.IsValid )
                 return null;
 
+            // set the local values
             byte[] fileData = Convert.FromBase64String( file.Data );
             this.FileName = file.Filename;
             this.ContentType = file.ContentType;
-
             this.ImageFile = new MemoryStream( fileData );
 
             return this.UploadBlob( containerName, blobName );
         }
 
-        /// <summary>Upload a blob to azure storage. Assumes all properties are set mnaually before upload.</summary>
+        /// <summary>Upload a blob to azure storage. Assumes all properties are set mnaually before uploading.</summary>
         /// <param name="containerName">The name of the blob contanier to upload to</param>
         public string UploadBlob( string containerName, string blobName = null )
         {
