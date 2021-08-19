@@ -7,9 +7,9 @@ namespace Raydreams.Common.Model
     {
         static TestData() { }
 
-        private static string[] _fnames = new string[] { "Sid", "Alex", "Sally", "Bubba", "Gladys", "Frank", "Albert", "Samantha", "Marsha", "Rocky", "Han", "Jenny", "James", "Luke" };
+        private static string[] _fnames = new string[] { "Sid", "Alex", "Sally", "Bubba", "Gladys", "Frank", "Albert", "Samantha", "Marsha", "Rocky", "Han", "Jenny", "James", "Luke", "Mongo", "Peter", "Mary" };
 
-        private static string[] _lnames = new string[] { "Ceasar", "Watson", "May", "Jones", "Brown", "Foxy", "Capone", "Blackwell", "White", "Washington", "Skylark", "Frank", "Jefferson", "Liu", "Smith" };
+        private static string[] _lnames = new string[] { "Ceasar", "Watson", "May", "Jones", "Brown", "Foxy", "Capone", "Blackwell", "White", "Washington", "Skylark", "Frank", "Jefferson", "Liu", "Smith", "Adams", "Marsh" };
 
         /// <summary></summary>
         public static string[] FirstNames

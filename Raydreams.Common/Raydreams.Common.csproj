@@ -3,7 +3,7 @@
 <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <PackageId>raydreams.common</PackageId>
-    <PackageVersion>1.0.20.0</PackageVersion>
+    <PackageVersion>1.0.21.0</PackageVersion>
     <Authors>TAG Digital Studios</Authors>
     <Description>A miscellaneous library mainly used for abstracting data repositories.</Description>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -15,7 +15,7 @@
    <Summary>A personal library</Summary>
    <Version>1.0.1.0</Version>
    <PackageReleaseNotes>Continuous additions, bug fixes and improvements.</PackageReleaseNotes>
-   <ReleaseVersion>1.0.20.*</ReleaseVersion>
+   <ReleaseVersion>1.0.21.*</ReleaseVersion>
 </PropertyGroup>
 
   <ItemGroup>

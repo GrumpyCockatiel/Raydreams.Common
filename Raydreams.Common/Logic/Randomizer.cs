@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Raydreams.Common.Extensions;
+using Raydreams.Common.Model;
 
 namespace Raydreams.Common.Logic
 {
@@ -270,7 +271,7 @@ namespace Raydreams.Common.Logic
         }
 
         /// <summary>A saving roll is the attribute value - the avg + some random value from [0,9]</summary>
-        /// <remarks>This is just an example</remarks>
+        /// <remarks>This is just an example function</remarks>
         public int SavingRoll( int attr, int avg )
 		{
 			return attr - avg + this.RandomInt( 0, 9 );
@@ -311,9 +312,18 @@ namespace Raydreams.Common.Logic
 		/// <returns></returns>
 		public string Folio(int min = 10, int max = 99)
 		{
-			string[] dictionary = Model.NATO.Values;
+			string[] dictionary = NATO.Values;
 			string word = dictionary[this._rand.Next( dictionary.Length )];
 			return $"{word}{this.RandomInt( min, max )}";
+		}
+
+		/// <summary>Picks a random name</summary>
+		/// <returns>String tuple pair</returns>
+		public (string, string) RandomName()
+		{
+			string fname = TestData.FirstNames[ this._rand.Next( TestData.FirstNames.Length ) ];
+			string lname = TestData.LastNames[this._rand.Next( TestData.LastNames.Length )];
+			return (fname, lname);
 		}
 
 		/// <summary>Creates a random YouTube style ID</summary>
