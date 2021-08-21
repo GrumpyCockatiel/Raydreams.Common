@@ -17,15 +17,24 @@ namespace Raydreams.Common.Serializers
         /// <returns></returns>
         public override DateTimeOffset? Deserialize( BsonDeserializationContext context, BsonDeserializationArgs args )
         {
-            if ( context.Reader.CurrentBsonType == BsonType.Null )
+            BsonType bsonType = context.Reader.GetCurrentBsonType();
+
+            switch ( bsonType )
             {
-                context.Reader.ReadNull();
-                return null;
+                case BsonType.Null:
+                    context.Reader.ReadNull();
+                    return null;
+                case BsonType.String:
+                    string value = context.Reader.ReadString();
+                    return DateTimeOffset.ParseExact( value, _format, DateTimeFormatInfo.InvariantInfo );
+
+                case BsonType.DateTime:
+                    var dateTimeValue = context.Reader.ReadDateTime();
+                    return DateTimeOffset.FromUnixTimeMilliseconds( dateTimeValue );
+
+                default:
+                    throw CreateCannotDeserializeFromBsonTypeException( bsonType );
             }
-
-            string value = context.Reader.ReadString();
-
-            return DateTimeOffset.ParseExact( value, _format, DateTimeFormatInfo.InvariantInfo );
         }
 
         /// <summary>Serialize to BSON from a C# nullable DateTimeOffset</summary>
@@ -56,6 +65,8 @@ namespace Raydreams.Common.Serializers
 
         private string StringSerializationFormat = "YYYY-MM-ddTHH:mm:ss.FFFFFFK";
 
+        #region [ Constructors ]
+
         /// <summary>Constructor</summary>
         /// <remarks>Assume as DateTime</remarks>
         public DateTimeOffsetSerializer() : this( BsonType.DateTime )
@@ -75,6 +86,8 @@ namespace Raydreams.Common.Serializers
 
             _representation = representation;
         }
+
+        #endregion [ Constructors ]
 
         /// <summary></summary>
         public BsonType Representation => _representation;
@@ -112,8 +125,7 @@ namespace Raydreams.Common.Serializers
             switch ( _representation )
             {
                 case BsonType.String:
-                    bsonWriter.WriteString( value.ToString
-                          ( StringSerializationFormat, DateTimeFormatInfo.InvariantInfo ) );
+                    bsonWriter.WriteString( value.ToString ( StringSerializationFormat, DateTimeFormatInfo.InvariantInfo ) );
                     break;
 
                 case BsonType.DateTime:
