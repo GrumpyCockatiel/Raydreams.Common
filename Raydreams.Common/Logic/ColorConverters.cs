@@ -5,10 +5,10 @@ using Raydreams.Common.Extensions;
 
 namespace Raydreams.Common.Logic
 {
-    /// <summary></summary>
+    /// <summary>Convert color spaces from one to another in different useful formats</summary>
     public static class ColorConverters
     {
-        /// <summary>Given a string of CMYK colors values [0,100] converts to array of floats [0,1.0]</summary>
+        /// <summary>Given a string of CMYK colors values [0,100] converts to an array of floats [0,1.0]</summary>
         /// <param name="str">CMYK String in the format 45,23,99,12</param>
         /// <returns></returns>
         public static double[] CMYKStrToDouble( this string str )
@@ -31,11 +31,8 @@ namespace Raydreams.Common.Logic
         /// <returns></returns>
         public static int[] CMYKToRGB(double[] cmyk)
 		{
-            //int[] rgb = new int[] { 0, 0, 0 };
-
-            //rgb[0] = Convert.ToInt32( Math.Round( 255.0 * ( 1.0 - cmyk[0] ) * ( 1.0 - cmyk[3] ) ) );
-            //rgb[1] = Convert.ToInt32( Math.Round( 255.0 * ( 1.0 - cmyk[1] ) * ( 1.0 - cmyk[3] ) ) );
-            //rgb[2] = Convert.ToInt32( Math.Round( 255.0 * ( 1.0 - cmyk[2] ) * ( 1.0 - cmyk[3] ) ) );
+            if (cmyk == null || cmyk.Length < 4)
+                return new int[] {0,0,0};
 
             double c = ( cmyk[0] * ( 1.0 - cmyk[3] ) + cmyk[3] );
             double m = ( cmyk[1] * ( 1.0 - cmyk[3] ) + cmyk[3] );
@@ -56,22 +53,18 @@ namespace Raydreams.Common.Logic
 			return rgb.ToHexString().ToUpper();
 		}
 
-        /// <summary></summary>
-        /// <param name="rgb"></param>
+        /// <summary>Take a CMYK string in the format C,M,Y,K and convert to a Color struct</summary>
+        /// <param name="cmykStr"></param>
         /// <returns></returns>
         public static Color CMYKStringToColor( string cmykStr )
         {
-            //string[] parts = cmyk.Split( ',', StringSplitOptions.RemoveEmptyEntries );
-
-            //int[] rgb = CMYKToRGB( new int[] { Int32.Parse( parts[0] ), Int32.Parse( parts[1] ), Int32.Parse( parts[2] ), Int32.Parse( parts[3] ) } );
-
             double[] cmyk = CMYKStrToDouble( cmykStr );
             int[] rgb = CMYKToRGB( cmyk );
 
             return Color.FromArgb( rgb[0] , rgb[1], rgb[2] );
         }
 
-        /// <summary></summary>
+        /// <summary>Take a RGB string in the format R,G,B and convert to a Color struct</summary>
         /// <param name="rgb"></param>
         /// <returns></returns>
         public static Color RGBStringToColor( string rgb )
@@ -116,7 +109,7 @@ namespace Raydreams.Common.Logic
             return ColorTranslator.FromHtml( $"#{hex}" );
         }
 
-        /// <summary></summary>
+        /// <summary>Make a Hex Color string from a Color object</summary>
         /// <param name="c"></param>
         /// <returns></returns>
         public static string ColorToHexStr( Color c )
@@ -124,7 +117,7 @@ namespace Raydreams.Common.Logic
             return RGBIntsToHex( new byte[] { c.R, c.G, c.B } );
         }
 
-        /// <summary></summary>
+        /// <summary>Make an RGB string from a Color object</summary>
         /// <param name="c"></param>
         /// <returns></returns>
         public static string ColorToRGBStr( Color c )
@@ -132,7 +125,7 @@ namespace Raydreams.Common.Logic
             return $"{c.R},{c.G},{c.B}";
         }
 
-        /// <summary></summary>
+        /// <summary>Get a CMYK string from a Color object</summary>
         /// <param name="c"></param>
         /// <returns></returns>
         public static string ColorToCMYKStr( Color c )
@@ -259,18 +252,20 @@ namespace Raydreams.Common.Logic
             return new double[] { l, a, b };
         }
 
-        /// <summary>Takes to colors as Lab arrays of type double</summary>
+        /// <summary>Takes two colors as Lab arrays of type double</summary>
         /// <param name="c1">Lab color array as double array</param>
         /// <param name="c2">Lab color array as double array</param>
         /// <returns>A DeltaE comparison value</returns>
         public static double CalcDeltaE( double[] c1, double[] c2)
         {
+            // needs validation
+
 		    return Math.Sqrt( Math.Pow(c2[0] - c1[0], 2) + Math.Pow( c2[1] - c1[1], 2) + Math.Pow( c2[2] - c1[2], 2));
 	    }
 
         /// <summary>Returns JUST the luminance of a specified color, the L in Lab</summary>
-        /// <param name="c"></param>
-        /// <returns></returns>
+        /// <param name="c">the Color object</param>
+        /// <returns>a luminance value</returns>
         public static double CalcLuminance(this Color c)
         {
             double[] xyz = ColorToXYZ( c );
