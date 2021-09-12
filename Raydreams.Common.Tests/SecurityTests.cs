@@ -4,7 +4,6 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Raydreams.Common.IO;
-using Raydreams.Common.Logic;
 using Raydreams.Common.Security;
 
 namespace Raydreams.Common.Tests
@@ -177,9 +176,6 @@ namespace Raydreams.Common.Tests
             using var provider = new RSACryptoServiceProvider( 512 );
             provider.ImportParameters( pk );
 
-            RSAKeyGenerator gen = new RSAKeyGenerator();
-            int size = gen.GenerateKeys( RSAKeySize.Key2048 );
-
             Assert.IsTrue( true );
         }
 
@@ -198,16 +194,29 @@ namespace Raydreams.Common.Tests
         [TestMethod]
         public void SignTest()
         {
-            RSAKeyGenerator gen = new RSAKeyGenerator();
-            int size = gen.GenerateKeys( RSAKeySize.Key2048, false );
+            var keys = AsymmetricEncryptor.MakeKeys( RSAKeySize.Key4096 );
 
             var data = new byte[] { 0x00, 0x34, 0x56, 0x19 };
 
-            byte[] sig = AsymmetricEncryptor.SignWithRSA256( data, gen.PrivateKey );
+            byte[] sig = AsymmetricEncryptor.SignWithSHA256( data, keys.sk );
 
-            bool verified = AsymmetricEncryptor.VerifyRSA256( data, sig, gen.PublicKey );
+            bool verified = AsymmetricEncryptor.VerifyWithSHA256( data, sig, keys.pk );
 
             Assert.IsTrue(verified);
+        }
+
+        [TestMethod]
+        public void AsymmetricEncryptTest()
+        {
+            var keys = AsymmetricEncryptor.MakeKeys( RSAKeySize.Key4096 );
+
+            string data = "The quick brown fox jumped over the lazy dog";
+
+            string encrypted = AsymmetricEncryptor.Encrypt( data, keys.pk );
+
+            string decrypted = AsymmetricEncryptor.Decrypt( encrypted, keys.sk );
+
+            Assert.IsTrue( data == decrypted );
         }
     }
 }
