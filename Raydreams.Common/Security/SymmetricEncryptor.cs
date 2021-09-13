@@ -40,6 +40,7 @@ namespace Raydreams.Common.Security
 	/// To be deprecated for JUST AES
 	/// For AES, the legal key sizes are 128, 192, and 256 bits.
 	/// </remarks>
+    [Obsolete("Only use AES for now. Left for legacy.")]
 	public class SymmetricEncryptor
 	{
 		#region [ Fields ]

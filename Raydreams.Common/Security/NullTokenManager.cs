@@ -27,6 +27,7 @@ namespace Raydreams.Common.Security
         /// <summary>Returns a legitimate looking token that will work in dev and test</summary>
         /// <param name="payload"></param>
         /// <returns></returns>
+        /// <remarks>Sinze Decode always returns the same thing, it really doesn't matter what this returns.</remarks>
         public string Encode( TokenPayload payload = null )
         {
             return "EZR-w_wrEwU$zZwg8JMgPrPNT6d4MqGuoJPsOERRhtvXpi6REJYaBviuuCyZGGfarGe7-kGrcrKW";

@@ -14,7 +14,8 @@ namespace Raydreams.Common.Security
         Key4096 = 4096
     }
 
-    /// <summary>Class for serializing key values</summary>
+    /// <summary>Class for de/serializing key values into JSON</summary>
+    /// <remarks>These are stored as BASE64 strings though you could keep them as byte data depending on your storage</remarks>
     public class RSAKeyValues
     {
         public RSAKeyValues(){ }
@@ -99,6 +100,7 @@ namespace Raydreams.Common.Security
     }
 
     /// <summary>Methods for handling asym encryption using RSA keys</summary>
+    /// <remarks>If you stick with the enum key size there should not be key size issues, checks are left for when it was an int</remarks>
     public static class AsymmetricEncryptor
     {
         /// <summary>Makes a new set of keys and returns them as BASE64 encoded</summary>
@@ -125,10 +127,8 @@ namespace Raydreams.Common.Security
         /// <summary>Use padding</summary>
         public static bool OptimalAsymmetricEncryptionPadding = false;
 
-        /// <summary>Signs a byte array with the specified private key</summary>
+        /// <summary>Signs some data with the specified private asym key using SHA-256</summary>
         /// <param name="data"></param>
-        /// <param name="keySize"></param>
-        /// <param name="publicXMLKey">The key pair in XML format</param>
         /// <returns></returns>
         public static byte[] SignWithSHA256( byte[] data, RSAKeyValues key)
         {
@@ -146,7 +146,7 @@ namespace Raydreams.Common.Security
             return sig;
         }
 
-        /// <summary>Verifies a signature with a public key</summary>
+        /// <summary>Verifies a signature using the corresponding public key</summary>
         /// <param name="data"></param>
         /// <param name="sig"></param>
         /// <param name="key"></param>
