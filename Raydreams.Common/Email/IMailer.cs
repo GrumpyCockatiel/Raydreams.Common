@@ -15,6 +15,9 @@ namespace Raydreams.Common.Email
 		/// <summary>List of valid email addresses to send to</summary>
 		string[] To { get; set; }
 
+		/// <summary>Reply to email address</summary>
+		string ReplyTo { get; set; }
+
 		/// <summary>Actually send the message async</summary>
 		Task<bool> Send( string from, string subject, string body );
 	}

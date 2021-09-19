@@ -9,18 +9,29 @@ namespace Raydreams.Common.Email
 	/// <summary>Concrete emailer for SendGrid</summary>
 	public class SendGridMailer : IMailer
 	{
-		private string[] _to = { };
-		private bool _html = false;
-		private HttpStatusCode _last = HttpStatusCode.Unused;
+        #region [ Fields ]
 
-		private string _key = String.Empty;
+        private string _replyTo = null;
 
-		/// <summary>Construct with the SendGrid API Key</summary>
+        private string[] _to = { };
+
+        private bool _html = false;
+
+        private HttpStatusCode _last = HttpStatusCode.Unused;
+
+        private string _key = String.Empty;
+
+        #endregion [ Fields ]
+
+        /// <summary>Construct with the SendGrid API Key</summary>
         /// <param name="key">SendGrid API key</param>
-		public SendGridMailer(string key)
+        public SendGridMailer(string key)
 		{
 			this._key = key;
 		}
+
+		/// <summary>Reply to email</summary>
+		public string ReplyTo { get; set; }
 
 		/// <summary></summary>
 		public string[] To
@@ -62,19 +73,30 @@ namespace Raydreams.Common.Email
 
 			try
 			{
+				// start a new message
 				SendGridClient mailer = new SendGridClient( this._key );
 				SendGridMessage msg = new SendGridMessage();
+
+				// set from
 				msg.SetFrom( new EmailAddress( from ) );
+
+				// set subject
 				msg.SetSubject( subject );
+
+				// set the Reply To if any
+				if ( !String.IsNullOrWhiteSpace(this.ReplyTo) )
+					msg.SetReplyTo( new EmailAddress( this.ReplyTo ) );
+
 				msg.AddContent( (this._html) ? MimeType.Html : MimeType.Text, body );
 
+				// add receipients
 				foreach ( string to in this.To )
 					msg.AddTo( new EmailAddress( to ) );
 
 				// wait for the reponse
-				//Response response = mailer.SendEmailAsync( msg ).GetAwaiter().GetResult();
 				Response response = await mailer.SendEmailAsync( msg );
 
+				// get the response
 				this.LastResponse = response.StatusCode;
 
 				results = (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK);

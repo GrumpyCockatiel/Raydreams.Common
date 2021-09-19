@@ -29,6 +29,9 @@ namespace Raydreams.Common.Email
 		/// <summary></summary>
 		public bool IsHTML { get; set; } = false;
 
+		/// <summary>Reply to email address</summary>
+		public string ReplyTo { get; set; } = null;
+
 		/// <summary></summary>
 		protected ILogger Logger
 		{
