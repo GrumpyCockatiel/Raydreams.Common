@@ -50,9 +50,18 @@ namespace Raydreams.Common.Extensions
             return (union != null && union.Count() > 0);
         }
 
+        /// <summary>If any string is null or white space, return true.</summary>
+        /// <param name="strs"></param>
+        /// <returns></returns>
+        public static bool IsAnyNullOrWhiteSpace( this string[] strs )
+        {
+            return strs.Count( s => String.IsNullOrWhiteSpace( s ) ) > 0;
+        }
+
         /// <summary>If any string is null or white space, return false. A validation extension to test all strings in a params array</summary>
         /// <param name="strs"></param>
         /// <returns></returns>
+        [Obsolete( "Use IsAnyNullOrWhiteSpace instead" )]
         public static bool IsAllNotNullOrWhiteSpace(this string[] strs)
         {
             foreach (string s in strs)

@@ -64,6 +64,10 @@ namespace Raydreams.Common.Model
         [JsonProperty( "data" )]
         public string Data { get; set; } = String.Empty;
 
+        /// <summary>The byte length of the original decoded data</summary>
+        [JsonProperty( "length" )]
+        public int Filelength { get; set; } = 0;
+
         /// <summary>Quick check the object has everything to be valid</summary>
         /// <remarks>ContentType is optional since it can fallback to checking the filename or assume its a default.</remarks>
         [JsonProperty( "isValid" )]

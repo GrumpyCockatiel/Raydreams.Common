@@ -4,6 +4,7 @@ using System.Collections.Generic;
 namespace Raydreams.Common.Collections
 {
 	/// <summary>Provides the set of values by which a binary search tree can be enumerated.</summary>
+	/// <see cref="https://en.wikipedia.org/wiki/Tree_traversal" />
 	public enum TraversalMethod
 	{
 		/// <summary>Use a preorder (NLR), tree traversal method.</summary>
@@ -15,7 +16,10 @@ namespace Raydreams.Common.Collections
 		/// <summary>Use a level-order (breadth-first), tree traversal method.</summary>
 		Levelorder,
 		/// <summary>Only iterate the node's immediate children.</summary>
-		Children
+		Children,
+		/// <summary>Only iterate from the current node back to the root</summary>
+		Path
+		// Children - returns the enumerator to the children list, not the list itself.
 	}
 
 	/// <summary>The TreeNode inhierits from a generic node to create Mulitway (or N-way) tree structures.</summary>
@@ -83,10 +87,6 @@ namespace Raydreams.Common.Collections
 				return null;
 			}
 		}
-
-		//Path - returns a list from this node back up to the root.
-
-		// Children - returns the enumerator to the children list, not the list itself.
 
 		#endregion [Properties]
 
@@ -179,6 +179,9 @@ namespace Raydreams.Common.Collections
 				case TraversalMethod.Children:
 					return this._children.GetEnumerator();
 
+				case TraversalMethod.Path:
+					return Path.GetEnumerator();
+
 				case TraversalMethod.Preorder:
 				default:
 					return Preorder.GetEnumerator();
@@ -194,6 +197,24 @@ namespace Raydreams.Common.Collections
 		#endregion [Methods]
 
 		#region [Traversal Methods]
+
+
+		/// <summary></summary>
+		public IEnumerable<TreeNode<T>> Path
+		{
+			get
+			{
+				TreeNode<T> current = this;
+
+				while ( current.Parent != null )
+				{
+					current = current.Parent;
+
+					// return the current node
+					yield return current;
+				}
+			}
+		}
 
 		/// <summary>Creates a preorder enumerator.</summary>
 		public IEnumerable<TreeNode<T>> Preorder
