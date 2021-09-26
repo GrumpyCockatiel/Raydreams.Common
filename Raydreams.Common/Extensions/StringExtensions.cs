@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Reflection;
@@ -13,6 +14,14 @@ namespace Raydreams.Common.Extensions
     /// <summary>Tons of string utility functions</summary>
     public static class StringExtensions
 	{
+        /// <summary>Gets JUST the filename part of a URL</summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static string GetFilenameFromUrl( this string url )
+        {
+            return ( !url.Contains( "." ) ) ? String.Empty : Path.GetFileName( new Uri( url ).AbsolutePath );
+        }
+
         /// <summary>Truncates a string to the the specified length or less</summary>
         public static string Truncate(this string str, int length, bool trim = true)
         {
@@ -79,6 +88,7 @@ namespace Raydreams.Common.Extensions
         /// string s = "ID {0} has duplicate records".Formatter( id );
         /// made obsolete with the new C# $"{myVar} construct"
         /// </reamarks>
+        [Obsolete("Use the new $ formatter.")]
         public static string Formatter(this string str, params object[] values)
 		{
 			return String.Format(str, values);
