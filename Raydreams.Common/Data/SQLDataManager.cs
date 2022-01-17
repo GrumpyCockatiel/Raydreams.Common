@@ -68,7 +68,7 @@ namespace Raydreams.Common.Data
 
 		#region [Select Methods]
 
-		/// <summary></summary>
+		/// <summary>Gets info on the database</summary>
 		/// <returns></returns>
 		public string DBInfo()
 		{
@@ -514,7 +514,7 @@ namespace Raydreams.Common.Data
 			return this.Execute(cmd);
 		}
 
-		/// <summary></summary>
+		/// <summary>Executes a non query command</summary>
 		protected int Execute(SqlCommand cmd)
 		{
 			int rows = 0;
@@ -752,26 +752,27 @@ namespace Raydreams.Common.Data
 		//	}
 		//}
 
+		#endregion [Private Methods]
+
+		#region [Utility Methods]
+
 		/// <summary>Determines if the Type T needs to be quoted within the query string.</summary>
-		/// <param name="t"></param>
-		/// <returns></returns>
-		private static bool QuotableType(Type t)
+		/// <param name="t">the type to check</param>
+		/// <returns>true if needs quoting, otherwise false</returns>
+		/// <remarks>Probbaly needs to move to a base Relational DB abstract class</remarks>
+		public static bool QuotableType( Type t )
 		{
-			if (t == typeof(string))
+			if ( t == typeof( string ) )
 				return true;
-			else if (t == typeof(DateTime) || t == typeof(Nullable<DateTime>))
+			else if ( t == typeof( DateTime ) || t == typeof( Nullable<DateTime> ) )
 				return true;
-			else if (t == typeof(DateTimeOffset) || t == typeof(Nullable<DateTimeOffset>))
+			else if ( t == typeof( DateTimeOffset ) || t == typeof( Nullable<DateTimeOffset> ) )
 				return true;
-			else if (t == typeof(Guid) || t == typeof(Nullable<Guid>))
+			else if ( t == typeof( Guid ) || t == typeof( Nullable<Guid> ) )
 				return true;
 
 			return false;
 		}
-
-		#endregion [Private Methods]
-
-		#region [Utility Methods]
 
 		/// <summary>Searches a query and replaces all the table name tokens with the corresponding property string.</summary>
 		/// <returns></returns>

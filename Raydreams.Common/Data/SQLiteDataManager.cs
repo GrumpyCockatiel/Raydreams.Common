@@ -8,43 +8,43 @@ using Raydreams.Common.Extensions;
 namespace Raydreams.Common.Data
 {
     /// <summary>A base data manager for SQLlite</summary>
-    /// <remarks>Can we switch this to RayProperty</remarks>
+    /// <remarks>Still working on bring the SQL Server, postGres and SQLite up to all the same features</remarks>
     public abstract class SQLiteDataManager
     {
         #region [Fields]
 
+        /// <summary>Gets info about the DB</summary>
         private static readonly string _dbInfo = @"SELECT SERVERPROPERTY('productversion') AS [ProductVersion], SERVERPROPERTY('productlevel') AS [ProductLevel], SERVERPROPERTY('edition') AS [Edition], SERVERPROPERTY('EditionID') AS [EditionID], SERVERPROPERTY('ServerName') AS [MachineName]";
 
+        /// <summary>Base command for truncating a table</summary>
         private static readonly string _truncateTable = "TRUNCATE TABLE {0}";
+
+        /// <summary>Base command for bulk inserting from one table to another</summary>
         private static readonly string _backupTable = "INSERT INTO {0} SELECT * FROM {1}";
 
-        private SQLiteConnection _dbConn = null;
-
         #endregion [Fields]
-
 
         #region [Constructors]
 
         /// <summary></summary>
         public SQLiteDataManager(string connStr)
         {
-            this._dbConn = new SQLiteConnection(connStr);
+            if ( String.IsNullOrWhiteSpace( connStr ) )
+                throw new System.ArgumentException( "A connection string is required", nameof(connStr) );
+
+            this.DBConnection = new SQLiteConnection(connStr);
         }
 
         #endregion [Constructors]
 
         #region [Properties]
 
-        /// <summary></summary>
-        public SQLiteConnection DBConnection
-        {
-            get { return this._dbConn; }
-            protected set { this._dbConn = value; }
-        }
+        /// <summary>The DB Connection</summary>
+        public SQLiteConnection DBConnection { get; set; }
 
         #endregion [Properties]
 
-        #region [Methods]
+        #region [ Methods ]
 
         /// <summary>Selects everything from the specified table.</summary>
         protected List<T> SelectAll<T>(string tableName, string context = null) where T : new()
@@ -120,7 +120,7 @@ namespace Raydreams.Common.Data
 
             SQLiteDataReader reader = null;
 
-            // does any property posses FieldSource with null context
+            // does any property posses RayAttribute with null context
             bool withContext = (!String.IsNullOrWhiteSpace(context));
 
             // get all the properties in the class
@@ -166,6 +166,183 @@ namespace Raydreams.Common.Data
             return results;
         }
 
+        /// <summary>Insert the generic object into the specified database table where Property Names exactly match the field names.</summary>
+        /// <param name="obj">The object to insert</param>
+        /// <param name="tableName">The table to insert into</param>
+        /// <param name="context">WHat context to use which may be null or named</param>
+        /// <returns>Number of inserted rows</returns>
+        /// <remarks>Right now casts enums to an Int until we have some way to indicate how to handle them</remarks>
+        protected int Insert<T>( T obj, string tableName ) where T : new()
+        {
+            // if no table or connection then abort
+            if ( String.IsNullOrWhiteSpace( tableName ) || this.DBConnection == null )
+                return 0;
+
+            // capture properties and their values to insert
+            List<string> propNames = new List<string>();
+            List<string> values = new List<string>();
+
+            // get all the properties in the class
+            PropertyInfo[] props = typeof( T ).GetProperties( BindingFlags.Public | BindingFlags.Instance );
+
+            // if no readable properties then abort
+            if ( props.Length < 1 )
+                return 0;
+
+            // roll the query
+            string query = this.FormatInsertCommand<T>( obj, tableName, props, null );
+
+            // construct & execute the command
+            SQLiteCommand cmd = new SQLiteCommand( query, this.DBConnection );
+            return this.Execute( cmd );
+        }
+
+        /// <summary>Insert an object with context</summary>
+        /// <param name="obj"></param>
+        /// <param name="tableName"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        /// <remarks>Inserts can be merged into 1 method at some point</remarks>
+        protected int Insert<T>( T obj, string tableName, string context ) where T : new()
+        {
+            // if no table or connection then abort
+            if ( String.IsNullOrWhiteSpace( tableName ) || this.DBConnection == null )
+                return 0;
+
+            // determine the context
+            bool isNullContext = String.IsNullOrWhiteSpace( context );
+            if ( !isNullContext ) context = context.Trim();
+
+            // get all the properties in the class
+            PropertyInfo[] props = typeof( T ).GetProperties( BindingFlags.Public | BindingFlags.Instance );
+
+            // if no readable properties then abort - possible branch to insert by exact name
+            if ( props.Length < 1 )
+                return 0;
+
+            // get properties either with null context or context by name
+            IEnumerable<PropertyInfo> attrs = props.Where( prop => prop.GetCustomAttributes<RayPropertyAttribute>( true )
+                .Where( attr => (isNullContext) ? String.IsNullOrWhiteSpace( attr.Context ) : attr.Context == context ).Count() > 0 );
+
+            // possible branch to insert by exact name
+            if ( attrs.Count() < 1 )
+                return 0;
+
+            // roll the query
+            string query = this.FormatInsertCommand<T>(obj, tableName, attrs, context);
+
+            // construct & execute the command
+            SQLiteCommand cmd = new SQLiteCommand( query, this.DBConnection );
+            return this.Execute( cmd );
+        }
+
+        /// <summary>Executes a non query command</summary>
+        protected int Execute( SQLiteCommand cmd )
+        {
+            int rows = 0;
+
+            try
+            {
+                cmd.Connection.Open();
+
+                rows = cmd.ExecuteNonQuery();
+            }
+            catch ( System.Exception exp )
+            {
+                throw exp;
+            }
+            finally
+            {
+                // close the reader and connection
+                cmd.Connection.Close();
+            }
+
+            return rows;
+        }
+
+        #endregion [ Methods ]
+
+        #region [ Private Methods ]
+
+        /// <summary></summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="obj"></param>
+        /// <param name="props"></param>
+        /// <returns></returns>
+        private string FormatInsertCommand<T>( T obj, string tableName, IEnumerable<PropertyInfo> props, string ctx )
+        {
+            // if no table or connection then abort
+            if ( obj == null || String.IsNullOrWhiteSpace( tableName ) || props == null || props.Count() < 1 )
+                return null;
+
+            // determine the context type from the object itself
+            RayContext ctxType = RayPropertyAttribute.CalculateContext( typeof( T ), ctx );
+
+            if ( ctxType == RayContext.Error )
+                throw new System.Exception("A context was specified by no properties have RayAttribute");
+
+            // capture properties and their values to insert
+            List<string> propNames = new List<string>();
+            List<string> values = new List<string>();
+
+            // set the value of each property on the object
+            foreach ( PropertyInfo prop in props )
+            {
+                // can you publicly read the property
+                if ( !prop.CanRead )
+                    continue;
+
+                // reject classes for now except strings
+                if ( prop.PropertyType.IsClass && !SQLDataManager.QuotableType( prop.PropertyType ) )
+                    continue;
+
+                // reject arrays and collections for now
+                if ( prop.PropertyType.IsArray || ( prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof( List<> ) ) )
+                    continue;
+
+                // property names is determined context type
+                if ( ctxType == RayContext.PropertyName)
+                    propNames.Add( prop.Name );
+                else if ( ctxType == RayContext.Null )
+                {
+                    // get the properties FieldMap attribute
+                    RayPropertyAttribute dest = prop.GetCustomAttributes<RayPropertyAttribute>( false ).Where( a => a.IsNullContext ).FirstOrDefault();
+
+                    if ( dest == null )
+                        continue;
+
+                    propNames.Add( dest.Destination.Trim() );
+                }
+
+                // get the value
+                object value = prop.GetValue( obj );
+
+                if ( value == null )
+                {
+                    values.Add( "NULL" );
+                }
+                else if ( SQLDataManager.QuotableType( prop.PropertyType ) )
+                {
+                    values.Add( String.Format( "'{0}'", value.ToString() ) );
+                }
+                // bools are converted to int
+                else if ( prop.PropertyType == typeof( bool ) || prop.PropertyType == typeof( Nullable<bool> ) )
+                {
+                    values.Add( ( (bool)value ) ? "1" : "0" );
+                }
+                else if ( prop.PropertyType.IsEnum )
+                {
+                    values.Add( String.Format( "{0}", (int)value ) );
+                }
+                // need to deal with binary blobs
+                else
+                    values.Add( String.Format( "{0}", value.ToString() ) );
+            }
+
+            // roll the query
+            return String.Format( $"INSERT INTO {tableName} ({String.Join( ",", propNames )}) VALUES ({String.Join( ",", values )})" );
+        }
+
         /// <summary>Parses to an exact matching property name.</summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="cursor"></param>
@@ -206,7 +383,7 @@ namespace Raydreams.Common.Data
             return obj;
         }
 
-        /// <summary>Parses to FieldSource adorned attributes.</summary>
+        /// <summary>Parses to RayAttribute adorned attributes.</summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="cursor"></param>
         /// <param name="context">The context to use to parse, can be null and will use the first FieldSource attribute with no context.</param>
@@ -264,6 +441,6 @@ namespace Raydreams.Common.Data
             return obj;
         }
 
-        #endregion [Methods]
+        #endregion [ Private Methods ]
     }
 }

@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
 
     <IsPackable>false</IsPackable>
-    <ReleaseVersion>1.0.26.*</ReleaseVersion>
+    <ReleaseVersion>1.0.27.*</ReleaseVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,5 +18,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Raydreams.Common\Raydreams.Common.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Mocks\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Mocks\" />
   </ItemGroup>
 </Project>
