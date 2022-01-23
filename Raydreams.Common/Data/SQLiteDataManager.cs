@@ -178,10 +178,6 @@ namespace Raydreams.Common.Data
             if ( String.IsNullOrWhiteSpace( tableName ) || this.DBConnection == null )
                 return 0;
 
-            // capture properties and their values to insert
-            List<string> propNames = new List<string>();
-            List<string> values = new List<string>();
-
             // get all the properties in the class
             PropertyInfo[] props = typeof( T ).GetProperties( BindingFlags.Public | BindingFlags.Instance );
 
@@ -189,11 +185,9 @@ namespace Raydreams.Common.Data
             if ( props.Length < 1 )
                 return 0;
 
-            // roll the query
-            string query = this.FormatInsertCommand<T>( obj, tableName, props, null );
-
-            // construct & execute the command
-            SQLiteCommand cmd = new SQLiteCommand( query, this.DBConnection );
+            // roll the query & execute the command
+            SQLiteCommand cmd = this.FormatInsertCommand<T>( obj, tableName, props, null );
+            cmd.Connection = this.DBConnection;
             return this.Execute( cmd );
         }
 
@@ -228,11 +222,9 @@ namespace Raydreams.Common.Data
             if ( attrs.Count() < 1 )
                 return 0;
 
-            // roll the query
-            string query = this.FormatInsertCommand<T>(obj, tableName, attrs, context);
-
-            // construct & execute the command
-            SQLiteCommand cmd = new SQLiteCommand( query, this.DBConnection );
+            // roll the query & execute
+            SQLiteCommand cmd = this.FormatInsertCommand<T>( obj, tableName, attrs, context );
+            cmd.Connection = this.DBConnection;
             return this.Execute( cmd );
         }
 
@@ -244,7 +236,6 @@ namespace Raydreams.Common.Data
             try
             {
                 cmd.Connection.Open();
-
                 rows = cmd.ExecuteNonQuery();
             }
             catch ( System.Exception exp )
@@ -264,14 +255,13 @@ namespace Raydreams.Common.Data
 
         #region [ Private Methods ]
 
-        /// <summary></summary>
-        /// <typeparam name="T"></typeparam>
+        /// <summary>Formats the insert statement</summary>
         /// <param name="obj"></param>
         /// <param name="props"></param>
-        /// <returns></returns>
-        private string FormatInsertCommand<T>( T obj, string tableName, IEnumerable<PropertyInfo> props, string ctx )
+        /// <returns>Update to used parameterized queries</returns>
+        private SQLiteCommand FormatInsertCommand<T>( T obj, string tableName, IEnumerable<PropertyInfo> props, string ctx )
         {
-            // if no table or connection then abort
+            // if no table or properties then abort
             if ( obj == null || String.IsNullOrWhiteSpace( tableName ) || props == null || props.Count() < 1 )
                 return null;
 
@@ -281,28 +271,30 @@ namespace Raydreams.Common.Data
             if ( ctxType == RayContext.Error )
                 throw new System.Exception("A context was specified by no properties have RayAttribute");
 
-            // capture properties and their values to insert
-            List<string> propNames = new List<string>();
-            List<string> values = new List<string>();
+            Dictionary<string, SQLiteParameter> paras = new Dictionary<string, SQLiteParameter>();
 
             // set the value of each property on the object
             foreach ( PropertyInfo prop in props )
             {
+                // dict values
+                string propName = null;
+                SQLiteParameter param = null;
+
                 // can you publicly read the property
                 if ( !prop.CanRead )
                     continue;
 
-                // reject classes for now except strings
-                if ( prop.PropertyType.IsClass && !SQLDataManager.QuotableType( prop.PropertyType ) )
+                // reject arrays except byte[]
+                if ( prop.PropertyType.IsArray && prop.PropertyType != typeof( byte[] ) )
                     continue;
 
-                // reject arrays and collections for now
-                if ( prop.PropertyType.IsArray || ( prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof( List<> ) ) )
-                    continue;
+                // reject most generic Lists for now
+                if ( prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof( List<> ) )
+                        continue;
 
                 // property names is determined context type
                 if ( ctxType == RayContext.PropertyName)
-                    propNames.Add( prop.Name );
+                    propName = prop.Name;
                 else if ( ctxType == RayContext.Null )
                 {
                     // get the properties FieldMap attribute
@@ -311,36 +303,69 @@ namespace Raydreams.Common.Data
                     if ( dest == null )
                         continue;
 
-                    propNames.Add( dest.Destination.Trim() );
+                    propName = dest.Destination.Trim();
                 }
 
                 // get the value
                 object value = prop.GetValue( obj );
 
+                // any null values just set to DB Null
                 if ( value == null )
                 {
-                    values.Add( "NULL" );
+                    param = new SQLiteParameter( $":{propName}", Convert.DBNull );
                 }
-                else if ( SQLDataManager.QuotableType( prop.PropertyType ) )
+                // strings
+                else if ( prop.PropertyType == typeof(string) )
                 {
-                    values.Add( String.Format( "'{0}'", value.ToString() ) );
+                    param = new SQLiteParameter( $":{propName}", (value as string) );
+                }
+                // Guids
+                else if ( prop.PropertyType == typeof( Guid ) || prop.PropertyType == typeof( Nullable<Guid> ) )
+                {
+                    param = new SQLiteParameter( $":{propName}", ( (Guid)value ).ToString() );
+                }
+                // dates of any kind
+                else if ( prop.PropertyType == typeof( DateTime ) || prop.PropertyType == typeof( Nullable<DateTime> ) )
+                {
+                    param = new SQLiteParameter( $":{propName}", value );
+                }
+                else if ( prop.PropertyType == typeof( DateTimeOffset ) || prop.PropertyType == typeof( Nullable<DateTimeOffset> ) )
+                {
+                    param = new SQLiteParameter( $":{propName}", value );
                 }
                 // bools are converted to int
                 else if ( prop.PropertyType == typeof( bool ) || prop.PropertyType == typeof( Nullable<bool> ) )
                 {
-                    values.Add( ( (bool)value ) ? "1" : "0" );
+                    param = new SQLiteParameter( $":{propName}", (bool)value ? 1 : 0 );
                 }
+                // enums are int until we create an attribute option to specify text
                 else if ( prop.PropertyType.IsEnum )
                 {
-                    values.Add( String.Format( "{0}", (int)value ) );
+                    param = new SQLiteParameter( $":{propName}", (int)value );
                 }
-                // need to deal with binary blobs
-                else
-                    values.Add( String.Format( "{0}", value.ToString() ) );
+                // binary blobs
+                else if ( prop.PropertyType == typeof( byte[]) )
+                {
+                    param = new SQLiteParameter( $":{propName}", value );
+                }
+                else if ( !prop.PropertyType.IsClass ) // everything else thats NOT a class we have not already handled
+                    param = new SQLiteParameter( $":{propName}", value );
+
+                // add the whole thing to the dictionary
+                if (param != null)
+                    paras.Add( propName, param );
             }
 
             // roll the query
-            return String.Format( $"INSERT INTO {tableName} ({String.Join( ",", propNames )}) VALUES ({String.Join( ",", values )})" );
+            var parameters = paras.Select( n => n.Value.ParameterName ).ToArray();
+
+            string query = $"INSERT INTO {tableName} ({String.Join( ",", paras.Keys.ToArray() )}) VALUES ({String.Join( ",", parameters)})";
+
+            SQLiteCommand cmd = new SQLiteCommand( query );
+            cmd.CommandType = System.Data.CommandType.Text;
+            cmd.Parameters.AddRange( paras.Values.ToArray() );
+
+            return cmd;
         }
 
         /// <summary>Parses to an exact matching property name.</summary>

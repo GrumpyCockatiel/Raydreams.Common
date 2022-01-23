@@ -29,10 +29,10 @@ namespace Raydreams.Common.Tests
         {
             TestObjectRepo dm = new TestObjectRepo( @"Data Source=/Users/tag/Desktop/test.sqlite" )
             {
-                TableName = "Table2"
+                TableName = "Table1"
             };
 
-            int results = dm.Insert( new TestObject { ID = 1, Text = "Test" } );
+            int results = dm.Insert( new TestObject { ID = 4, Text = "Test some data", Timestamp = DateTimeOffset.UtcNow, Registered = true, Data = new byte[] { 0x45, 0x45, 0x45, 0x56 } } );
 
             Assert.IsTrue( results > 0 );
         }

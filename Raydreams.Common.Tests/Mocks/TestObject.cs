@@ -11,9 +11,17 @@ namespace Raydreams.Common.Tests
         [RayProperty( Destination = "id" )]
         public int ID { get; set; }
 
-        //[RayProperty( Destination = "text", Context = "Test" )]
         [RayProperty( Destination = "text", Context = null )]
         public string Text { get; set; }
+
+        [RayProperty( Destination = "ts", Context = null )]
+        public DateTimeOffset Timestamp { get; set; }
+
+        [RayProperty( Destination = "registered", Context = null )]
+        public bool Registered { get; set; }
+
+        [RayProperty( Destination = "data", Context = null )]
+        public byte[] Data { get; set; }
     }
 
     /// <summary>Test DataManager</summary>

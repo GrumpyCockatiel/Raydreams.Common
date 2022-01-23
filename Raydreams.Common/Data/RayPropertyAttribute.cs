@@ -10,7 +10,7 @@ namespace Raydreams.Common.Data
 	/// Contenxt Precedence is determined by the RayProperty attribute on the Data Object class
 	/// If there are no attributes on any property AND no context passed then a straight PropertyName mapping used
 	/// If there are no attributes on any property BUT some context passed -> thats an error and return nothing
-	/// If no context is passed (null context) but there are some attributes - then only consider those with an equal empty or null Context value
+	/// If no context is passed (null context) but there are some attributes - then only consider those with an equal empty or null Context value aka Default Context
 	/// If a context is passed then use only Properties in the matching context.
 	/// </remarks>
 	public enum RayContext
@@ -29,7 +29,8 @@ namespace Raydreams.Common.Data
 	/// <remarks>Constructor can only be used to mark a source or destination field.
 	/// Otherwise use named properties to use one attribute for both.
     /// To ignore some properties, adorn JUST the properties to insert or read
-	/// </remarks>
+	/// Need to handle enum serializaton to strings
+    /// </remarks>
 	[AttributeUsage( AttributeTargets.Property, AllowMultiple = true )]
 	public class RayPropertyAttribute : Attribute
 	{
