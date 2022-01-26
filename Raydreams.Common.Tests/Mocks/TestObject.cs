@@ -56,9 +56,14 @@ namespace Raydreams.Common.Tests
             return base.Insert<TestObject>( item, this.TableName, null );
         }
 
+        public int Truncate()
+        {
+            return base.TruncateTable( this.TableName );
+        }
+
         public List<TestObject> SelectAll()
         {
-            return this.SelectAll<TestObject>( this.TableName );
+            return base.SelectAll<TestObject>( this.TableName );
         }
     }
 }

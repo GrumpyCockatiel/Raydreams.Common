@@ -251,6 +251,58 @@ namespace Raydreams.Common.Data
             return rows;
         }
 
+        /// <summary>Counts the number of records in the table</summary>
+        /// <param name="tableName"></param>
+        /// <returns></returns>
+        protected int Count(string tableName)
+        {
+            int count = 0;
+
+            // if no table or connection then abort
+            if ( String.IsNullOrWhiteSpace( tableName ) || this.DBConnection == null )
+                return count;
+
+            SQLiteCommand cmd = new SQLiteCommand( $"SELECT COUNT(*) FROM {tableName.Trim()}", this.DBConnection );
+
+            try
+            {
+                cmd.Connection.Open();
+                object results = cmd.ExecuteScalar();
+
+                if ( results != null )
+                    count = Convert.ToInt32( results );
+            }
+            catch ( System.Exception exp )
+            {
+                throw exp;
+            }
+            finally
+            {
+                // close the reader and connection
+                cmd.Connection.Close();
+            }
+
+            return count;
+        }
+
+        /// <summary>Truncates the entire contents of a table, be careful using this.</summary>
+        protected virtual int TruncateTable( string tableName )
+        {
+            if ( String.IsNullOrWhiteSpace( tableName ) )
+                return 0;
+
+            SQLiteCommand cmd = new SQLiteCommand( $"DELETE FROM {tableName.Trim()}", this.DBConnection );
+
+            try
+            {
+                return this.Execute( cmd );
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
         #endregion [ Methods ]
 
         #region [ Private Methods ]
