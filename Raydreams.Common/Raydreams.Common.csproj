@@ -15,15 +15,27 @@
    <Summary>A personal library</Summary>
    <Version>1.0.1.0</Version>
    <PackageReleaseNotes>Continuous additions, bug fixes and improvements.</PackageReleaseNotes>
-   <ReleaseVersion>1.0.29.*</ReleaseVersion>
+   <Configurations>Debug;Release;Debug Mac</Configurations>
 </PropertyGroup>
 
+<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug Mac|AnyCPU' ">
+  <IntermediateOutputPath>obj\Debug\netstandard2.1</IntermediateOutputPath>
+  <DebugSymbols>true</DebugSymbols>
+  <DebugType>portable</DebugType>
+  <Optimize>false</Optimize>
+  <OutputPath>bin\Debug Mac\netstandard2.1</OutputPath>
+  <DefineConstants>TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_1;</DefineConstants>
+  <WarningLevel>4</WarningLevel>
+  <DocumentationFile></DocumentationFile>
+  <NoWarn>1701;1702</NoWarn>
+  <NoStdLib>true</NoStdLib>
+</PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
     <PackageReference Include="MongoDB.Driver" Version="2.14.1" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.115.5" />
-    <PackageReference Include="SendGrid" Version="9.25.2" />
+    <PackageReference Include="SendGrid" Version="9.25.3" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.10.0" />
     <PackageReference Include="Microsoft.Azure.Cosmos.Table" Version="1.0.8" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.3" />

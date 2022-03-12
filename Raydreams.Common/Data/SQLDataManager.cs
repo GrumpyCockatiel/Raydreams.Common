@@ -450,11 +450,12 @@ namespace Raydreams.Common.Data
 		#endregion [Select Methods]
 
 		/// <summary>Insert the generic object into the specified database table where Property Names exactyl match the field names.</summary>
-		/// <typeparam name="T"></typeparam>
 		/// <param name="obj"></param>
 		/// <param name="tableName"></param>
 		/// <returns></returns>
-		/// <remarks>Right now casts enums to an Int until we have some way to indicate how to handle them</remarks>
+		/// <remarks>Right now casts enums to an Int until we have some way to indicate how to handle them
+		/// Needs to be updated to used parameterized queries
+		/// </remarks>
 		protected int Insert<T>(T obj, string tableName, string context = null) where T : new()
 		{
 
@@ -816,7 +817,7 @@ namespace Raydreams.Common.Data
 			return query;
 		}
 
-		/// <summary>Trncates the destination table.</summary>
+		/// <summary>Truncates the destination table and copies over the source table.</summary>
 		/// <param name="src">Tabel to copy from</param>
 		/// <param name="dest">Table to truncate and copy to</param>
 		protected virtual int BackupTable(string srcTable, string bkupTable)

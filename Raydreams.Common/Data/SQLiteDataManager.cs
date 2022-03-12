@@ -310,7 +310,6 @@ namespace Raydreams.Common.Data
         /// <summary>Formats the insert statement</summary>
         /// <param name="obj"></param>
         /// <param name="props"></param>
-        /// <returns>Update to used parameterized queries</returns>
         private SQLiteCommand FormatInsertCommand<T>( T obj, string tableName, IEnumerable<PropertyInfo> props, string ctx )
         {
             // if no table or properties then abort
