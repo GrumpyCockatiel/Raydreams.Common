@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using Raydreams.Common.Extensions;
 using Raydreams.Common.Logging;
-using Raydreams.Common.Model;
+using System.Threading.Tasks;
 
 namespace Raydreams.Common.Data
 {
-	/// <summary>Logs to a Mongo DB</summary>
-	public class MongoLogger : MongoDataManager<LogRecord, long> , ILogger
+	/// <summary>Logs to a Mongo DB Collection usually named Logs</summary>
+	/// <remarks>This class is pretty old and could probably use a review and cleanup</remarks>
+	public class MongoLogger : MongoDataManager<LogRecord, long>, ILogRepository, ILogger
 	{
 		#region [Fields]
 
@@ -22,23 +22,27 @@ namespace Raydreams.Common.Data
 
 		#endregion [Fields]
 
-		/// <summary></summary>
-        /// <param name="connStr"></param>
-        /// <param name="db"></param>
-        /// <param name="table"></param>
-        /// <param name="src"></param>
+		#region [Constructor]
+
+		/// <summary>Constructor</summary>
+		/// <param name="connStr"></param>
+		/// <param name="db"></param>
+		/// <param name="table"></param>
+		/// <param name="src"></param>
 		public MongoLogger( string connStr, string db, string table, string src = null ) : base( connStr, db )
 		{
 			this.TableName = table;
 			this.Source = src;
 		}
 
+		#endregion [Constructor]
+
 		#region [Properties]
 
-		/// <summary></summary>
-		public int Max { get; set; } = 100;
+		/// <summary>The maximum number of logs to return</summary>
+		public int Max { get; set; } = 200;
 
-		/// <summary>The name of the logging table</summary>
+		/// <summary>The name of the logging table or collection</summary>
 		public string TableName
 		{
 			get { return this._table; }
@@ -71,15 +75,25 @@ namespace Raydreams.Common.Data
 
 		#region [ Base Methods ]
 
+		/// <summary>Set the minimum level to log</summary>
+		/// <param name="lvl"></param>
+		/// <returns></returns>
+		public MongoLogger SetLevel( LogLevel lvl )
+		{
+			this.Level = lvl;
+			return this;
+		}
+
 		/// <summary>Sample method that just gets all the logs</summary>
-		public List<LogRecord> GetAll()
+		/// <remarks>Generally do not want to use this</remarks>
+		public List<LogRecord> List()
 		{
 			return base.GetAll( this.TableName );
 		}
 
-		/// <summary>Gets only transactions for this day right now</summary>
+		/// <summary>Gets only the top N logs sorted descending by timestamp</summary>
 		/// <returns></returns>
-		public List<LogRecord> GetTop( int top = 100 )
+		public List<LogRecord> ListTop( int top = 100 )
 		{
 			if ( top > this.Max )
 				top = this.Max;
@@ -90,33 +104,27 @@ namespace Raydreams.Common.Data
 			return ( results != null && results.Count > 0 ) ? results : new List<LogRecord>();
 		}
 
-		/// <summary>Get logs on a single day</summary>
-		public List<LogRecord> GetByDay( DateTimeOffset day )
+		/// <summary>Get logs only on a single day</summary>
+		public List<LogRecord> ListByDay( DateTimeOffset day )
 		{
-			return this.GetByDates( day, day );
+			return this.ListByRange( day.StartOfDay(), day.EndOfDay() );
 		}
 
-		/// <summary>Gets only transactions for this day right now</summary>
+		/// <summary>Gets logs within a date range</summary>
 		/// <returns></returns>
-		public List<LogRecord> GetByDates( DateTimeOffset begin, DateTimeOffset end )
+		public List<LogRecord> ListByRange( DateTimeOffset begin, DateTimeOffset end )
 		{
-			// normaliza the dates
-			DateTime start = begin.UtcDateTime.StartOfDay( DateTimeKind.Utc );
-			DateTime stop = ( end.UtcDateTime + new TimeSpan( 1, 0, 0, 0 ) ).StartOfDay( DateTimeKind.Utc );
-
-			List<LogRecord> results = new List<LogRecord>();
-
-			if ( start >= stop )
-				return results;
+			if ( begin > end )
+				return new List<LogRecord>();
 
 			IMongoCollection<LogRecord> collection = this.Database.GetCollection<LogRecord>( this.TableName );
-			return collection.Find<LogRecord>( t => t.Timestamp >= start && t.Timestamp < stop ).ToList();
+			return collection.Find<LogRecord>( t => t.Timestamp >= begin && t.Timestamp < end ).ToList();
 		}
 
 		/// <summary>Deletes any logs older than the specified number of days</summary>
 		/// <param name="days">Number of days</param>
 		/// <returns>Records removed</returns>
-		public long PurgeAfter( int days = 90 )
+		public async Task<long> PurgeAfter( int days = 90 )
 		{
 			if ( days < 0 )
 				return 0;
@@ -124,7 +132,7 @@ namespace Raydreams.Common.Data
 			DateTime expire = DateTime.UtcNow.Subtract( new TimeSpan( days, 0, 0, 0 ) );
 
 			IMongoCollection<LogRecord> collection = this.Database.GetCollection<LogRecord>( this.TableName );
-			DeleteResult results = collection.DeleteMany<LogRecord>( t => t.Timestamp < expire );
+			DeleteResult results = await collection.DeleteManyAsync<LogRecord>( t => t.Timestamp < expire );
 
 			return ( results.IsAcknowledged ) ? results.DeletedCount : 0;
 		}
@@ -142,7 +150,7 @@ namespace Raydreams.Common.Data
 
 		/// <summary></summary>
 		/// <param name="message"></param>
-		public void Log(LogRecord message )
+		public void Log( LogRecord message )
 		{
 			this.InsertLog( this.Source, message.Level, message.Category, message.Message, message.Args );
 		}
@@ -200,39 +208,19 @@ namespace Raydreams.Common.Data
 			if ( lvl < this.Level )
 				return rows;
 
-			if ( String.IsNullOrWhiteSpace( logger ) )
-				logger = Assembly.GetExecutingAssembly().FullName;
-
-			// convert the args dictionary to a string and add to the end
-			if ( args != null && args.Length > 0 )
-				msg = String.Format( "{0} args={1}", msg, String.Join( ";", args ) );
-
-			if ( String.IsNullOrWhiteSpace( msg ) )
-				msg = String.Empty;
-
 			try
 			{
-				BsonDocument log = null;
+				if ( String.IsNullOrWhiteSpace( logger ) )
+					logger = Assembly.GetExecutingAssembly().FullName;
 
-				if ( String.IsNullOrWhiteSpace( category ) )
-					log = new BsonDocument {
-					{ "timestamp", DateTime.UtcNow },
-					{ "source", logger.Trim() },
-					{ "level", lvl.ToString() },
-					{ "message", msg }
-					};
-				else
-					log = new BsonDocument {
-					{ "timestamp", DateTime.UtcNow },
-					{ "source", logger.Trim() },
-					{ "level", lvl.ToString() },
-					{ "category", category },
-					{ "message", msg }
-					};
+				// convert the args dictionary to a string and add to the end
+				if ( args != null && args.Length > 0 )
+					msg = String.Format( "{0} args={1}", msg, String.Join( ";", args ) );
 
-				//IMongoDatabase db = this.Client.GetDatabase( this.Database );
-				IMongoCollection<BsonDocument> collection = this.Database.GetCollection<BsonDocument>( this.TableName );
-				collection.InsertOne( log );
+				if ( String.IsNullOrWhiteSpace( msg ) )
+					msg = String.Empty;
+
+				base.Insert( new LogRecord( msg, lvl ) { Category = category, Source = logger.Trim() }, this.TableName );
 			}
 			catch ( System.Exception exp )
 			{

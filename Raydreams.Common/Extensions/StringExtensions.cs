@@ -220,7 +220,7 @@ namespace Raydreams.Common.Extensions
 			return fileName.IndexOf( '*' ) >= 0;
 		}
 
-		/// <summary>Parses a string to the specified enum value</summary>
+		/// <summary>Tries to cast a string to an Enum which could fail</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="value"></param>
 		/// <param name="defaultValue"></param>
@@ -230,19 +230,37 @@ namespace Raydreams.Common.Extensions
             return (T)Enum.Parse(typeof(T), value, ignoreCase);
         }
 
-        /// <summary>Tries to parse a string to the specified enum value</summary>
-        public static bool TryParseToEnum<T>(this string name, out T value, bool ignoreCase = true)
+        /// <summary>Converts a string to an enum value of enum T failing to default(T)</summary>
+        /// <returns></returns>
+        /// <remarks>Case is ignored</remarks>
+        public static T GetEnumValue<T>( this string value ) where T : struct, IConvertible
         {
-            try
-            {
-                value = name.ToEnum<T>(ignoreCase);
-                return true;
-            }
-            catch (ArgumentException)
-            {
-                value = default(T);
-                return false;
-            }
+            T result = default( T );
+
+            if ( String.IsNullOrWhiteSpace( value ) )
+                return result;
+
+            if ( Enum.TryParse<T>( value, true, out result ) )
+                return result;
+
+            return default( T );
+        }
+
+        /// <summary>Converts a string to an enum value with the specified default on fail</summary>
+        /// <param name="def">Default value if parsing fails</param>
+        /// <param name="ignoreCase">Ignore case by default</param>
+        /// <returns></returns>
+        public static T GetEnumValue<T>( this string value, T def, bool ignoreCase = true ) where T : struct, IConvertible
+        {
+            T result = def;
+
+            if ( String.IsNullOrWhiteSpace( value ) )
+                return result;
+
+            if ( Enum.TryParse<T>( value, ignoreCase, out result ) )
+                return result;
+
+            return def;
         }
 
         /// <summary>Returns the enum value by the description string on the enum member</summary>

@@ -35,10 +35,9 @@ namespace Raydreams.Common.Logging
 	/// <summary>Converts an exception to a log object</summary>
 	public class ExceptionLog : LogRecord
 	{
-		public ExceptionLog(System.Exception exp) : base(LogLevel.Error)
+		public ExceptionLog(System.Exception exp) : base( exp.ToLogMsg( true ), LogLevel.Error)
 		{
 			this.Exception = exp;
-			this.Message = exp.ToLogMsg( true );
 			this.Category = LogManager.ErrorCategory;
 		}
 

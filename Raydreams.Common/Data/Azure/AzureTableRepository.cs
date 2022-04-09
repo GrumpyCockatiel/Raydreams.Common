@@ -125,5 +125,30 @@ namespace Raydreams.Common.Data
 
 			return results.HttpStatusCode;
 		}
+
+		/// <summary>This will delete every record in a table and is very dangerous</summary>
+		/// <param name="table"></param>
+		/// <param name="client"></param>
+		protected void DeleteAll()
+		{
+			TableContinuationToken token = null;
+			CloudTable tbl = this.AzureTable;
+			var query = new TableQuery<T>();
+			TableResult results = null;
+
+			do
+			{
+				var data = tbl.ExecuteQuerySegmentedAsync<T>( query, token ).GetAwaiter().GetResult();
+
+				foreach ( var row in data )
+				{
+					var op = TableOperation.Delete( row );
+					results = tbl.ExecuteAsync( op ).GetAwaiter().GetResult();
+				}
+
+				token = data.ContinuationToken;
+
+			} while ( token != null );
+		}
 	}
 }
