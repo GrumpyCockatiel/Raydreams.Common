@@ -225,29 +225,31 @@ namespace Raydreams.Common.Extensions
 		/// <param name="value"></param>
 		/// <param name="defaultValue"></param>
 		/// <returns></returns>
+        [Obsolete("Use GetEnumValue instead.")]
 		public static T ToEnum<T>(this string value, bool ignoreCase = true)
         {
             return (T)Enum.Parse(typeof(T), value, ignoreCase);
         }
 
         /// <summary>Converts a string to an enum value of enum T failing to default(T)</summary>
+        /// <param name="ignoreCase">Ignore case by default</param>
         /// <returns></returns>
         /// <remarks>Case is ignored</remarks>
-        public static T GetEnumValue<T>( this string value ) where T : struct, IConvertible
+        public static T GetEnumValue<T>( this string value, bool ignoreCase = true ) where T : struct, IConvertible
         {
             T result = default( T );
 
             if ( String.IsNullOrWhiteSpace( value ) )
                 return result;
 
-            if ( Enum.TryParse<T>( value, true, out result ) )
+            if ( Enum.TryParse<T>( value.Trim(), ignoreCase, out result ) )
                 return result;
 
             return default( T );
         }
 
         /// <summary>Converts a string to an enum value with the specified default on fail</summary>
-        /// <param name="def">Default value if parsing fails</param>
+        /// <param name="def">Explicit default value if parsing fails</param>
         /// <param name="ignoreCase">Ignore case by default</param>
         /// <returns></returns>
         public static T GetEnumValue<T>( this string value, T def, bool ignoreCase = true ) where T : struct, IConvertible
@@ -257,7 +259,7 @@ namespace Raydreams.Common.Extensions
             if ( String.IsNullOrWhiteSpace( value ) )
                 return result;
 
-            if ( Enum.TryParse<T>( value, ignoreCase, out result ) )
+            if ( Enum.TryParse<T>( value.Trim(), ignoreCase, out result ) )
                 return result;
 
             return def;

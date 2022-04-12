@@ -4,34 +4,40 @@ using MongoDB.Bson;
 
 namespace Raydreams.Common.Data
 {
-    /// <summary>Static Functions to more robustly convert data types from a string to a specific data type.</summary>
-    /// <remarks>
-    /// If the string is null then a null is still passed to the function.
-    /// Add as necessary
-    /// </remarks>
+    /// <summary>Static Functions to more safely convert data types from a string to a specific data type.</summary>
+    /// <remarks>Not all data types have been added yet and more are added as they are needed</remarks>
     public static class DataTypeConverter
 	{
-		/// <summary></summary>
-		/// <returns></returns>
-		/// <param name="def">Default value to return when a fail occurs</param>
-		public static int GetIntValue( this string value, int def = 0 )
-		{
-			int convert = 0;
+        /// <summary>Parses a string to an Integer with a default</summary>
 
-			if ( Int32.TryParse( value, out convert ) )
+        /// <param name="def">Default value to return when a fail occurs</param>
+        /// <returns>an integer</returns>
+        public static int GetIntValue( this string value, int def = 0 )
+		{
+			if ( Int32.TryParse( value, out int convert ) )
 				return convert;
 
 			return def;
 		}
 
-		/// <summary></summary>
-		/// <returns></returns>
-		/// <param name="def">Default value to return when a fail occurs</param>
-		public static int? GetNullableIntValue( this string value )
-		{
-			int convert = 0;
+        /// <summary>Parses a string to an Integer with a default and minimum value</summary>
+        /// <param name="def">Default value to return when a fail occurs</param>
+        /// <param name="min">Minimum value to return</param>
+        /// <returns>an integer</returns>
+        public static int GetIntValue( this string value, int min, int def = 0)
+        {
+            if ( Int32.TryParse( value, out int convert ) )
+                return (convert < min) ? min : convert;
 
-			if ( Int32.TryParse( value, out convert ) )
+            return def;
+        }
+
+        /// <summary></summary>
+        /// <returns></returns>
+        /// <param name="def">Default value to return when a fail occurs</param>
+        public static int? GetNullableIntValue( this string value )
+		{
+			if ( Int32.TryParse( value, out int convert ) )
 				return convert;
 
 			return null;
@@ -42,9 +48,7 @@ namespace Raydreams.Common.Data
 		/// <param name="def">Default value to return when a fail occurs</param>
 		public static long GetLongValue( this string value, long def = 0 )
 		{
-			long convert = 0;
-
-			if ( Int64.TryParse( value, out convert ) )
+			if ( Int64.TryParse( value, out long convert ) )
 				return convert;
 
 			return def;
@@ -147,22 +151,6 @@ namespace Raydreams.Common.Data
 
             return null;
         }
-
-        /// <summary>Converts a string to an enum value of enum T</summary>
-        /// <returns></returns>
-        public static T GetEnumValue<T>(this string value) where T : struct, IConvertible
-        {
-            T result = default(T);
-
-            if (String.IsNullOrWhiteSpace(value))
-                return result;
-
-            if (Enum.TryParse<T>(value, true, out result))
-                return result;
-
-            return default(T);
-        }
-
         /// <summary>Converts a string to a BSON Object ID</summary>
 		/// <returns></returns>
 		public static ObjectId GetObjectIdValue( this string value )

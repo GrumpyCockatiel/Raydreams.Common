@@ -22,28 +22,32 @@ namespace Raydreams.Common.Logging
 	/// </example>
 	public class LogManager
 	{
+		#region [ Categories ]
+
 		/// <summary>The default category name to use if there is none for an exception</summary>
 		public static readonly string ErrorCategory = "Exception";
-		
-		/// <summary>Default category to specify infromative run information like starting and stopping.</summary>
+
+		/// <summary>Default category to specify informative run information like starting and stopping.</summary>
 		public static readonly string RunCategory = "RunInfo";
 
-		/// <summary></summary>
+		#endregion [ Categories ]
+
+		/// <summary>Logging routes</summary>
 		private Dictionary<string, List<ILogger>> _routes = null;
 
 		/// <summary>The default logger</summary>
-		private ILogger _none = null;
+		private List<ILogger> _none = null;
 
 		/// <summary>The default source to set if none is specified</summary>
-		private string _src= null;
+		private string _src = null;
 
 		#region [ Constructors ]
 
 		/// <summary></summary>
-		/// <param name="none">The default logger to use if no cattegory route is found.</param>
+		/// <param name="none">The default logger to use if no category route is found.</param>
 		public LogManager( ILogger none )
 		{
-			this.Default = none;
+			this._none = new List<ILogger>() { none };
 			this._routes = new Dictionary<string, List<ILogger>>();
 		}
 
@@ -51,14 +55,17 @@ namespace Raydreams.Common.Logging
 
 		#region [ Properties ]
 
-		/// <summary>The default logger to use if no Category is defined.</summary>
-		public ILogger Default
+		/// <summary></summary>
+		/// <remarks>Only added for now to satisfy ILogger interface</remarks>
+		public LogLevel Level { get; set; } = LogLevel.All;
+
+		/// <summary>The default logger to use when no Category is defined.</summary>
+		public List<ILogger> Defaults
 		{
-			private set { this._none = value; }
 			get { return this._none; }
 		}
 
-		/// <summary>The logging source. Who is doing the logging.</summary>
+		/// <summary>Set the logging source. Who is doing the logging.</summary>
 		public string Source
 		{
 			get { return this._src; }
@@ -82,22 +89,36 @@ namespace Raydreams.Common.Logging
 
 		#region [ Methods ]
 
+		/// <summary>Adds another default logger for logging to multiple places all the time ignoring category</summary>
+		public LogManager AddDefault( ILogger logger )
+		{
+			if ( logger == null )
+				return this;
+
+			if ( this._none == null )
+				this._none = new List<ILogger>();
+
+			this._none.Add( logger );
+
+			return this;
+		}
+
 		/// <summary>Add a logging target to the specified category</summary>
 		/// <param name="category">Category to add to the specified logger that determines where the log is routed to</param>
-		public void AddTarget( string category, ILogger logger )
+		public LogManager AddTarget( string category, ILogger logger )
 		{
 			if ( String.IsNullOrWhiteSpace( category ) )
-				return;
+				return this;
 
-			this.AddTarget( new string[] { category }, logger );
+			return this.AddTarget( new string[] { category }, logger );
 		}
 
 		/// <summary>Add several categories to the same target</summary>
 		/// /// <param name="categories">Categories to add to the specified logger</param>
-		public void AddTarget(string[] categories, ILogger logger)
+		public LogManager AddTarget(string[] categories, ILogger logger)
 		{
 			if ( logger == null )
-				return;
+				return this;
 
 			foreach ( string str in categories )
 			{
@@ -111,6 +132,8 @@ namespace Raydreams.Common.Logging
 				else
 					this._routes.Add( cat, new List<ILogger>() { logger } );
 			}
+
+			return this;
 		}
 
 		/// <summary>Right now FLush has to be called to force the email logger to send out an email. In the future other final clean-up could be done</summary>
@@ -136,29 +159,44 @@ namespace Raydreams.Common.Logging
 		/// <summary></summary>
 		public void Debug( string message )
 		{
-			if ( this.Default != null )
-				this.Default.Debug( message );
+			if ( this.Defaults != null )
+				foreach ( ILogger logger in this.Defaults )
+					logger.Debug( message );
 		}
 
 		/// <summary>Log a simple message to the default logger</summary>
 		public void Log( string message, LogLevel level = LogLevel.Info )
 		{
-			if ( this.Default != null )
-				this.Default.Log( message, level );
+			if ( this.Defaults != null )
+				foreach ( ILogger logger in this.Defaults )
+					logger.Log( message, level );
+		}
+
+		/// <summary>Log a simple message to the default logger</summary>
+		public void Log( string message, LogLevel level = LogLevel.Info, params object[] args )
+		{
+			if ( this.Defaults != null )
+				foreach ( ILogger logger in this.Defaults )
+					logger.Log( message, null, level, args );
 		}
 
 		/// <summary>Log to a specified logger with category</summary>
 		public void Log( string message, string category, LogLevel level = LogLevel.Info )
 		{
+			// if null category
 			if ( String.IsNullOrWhiteSpace( category ) )
-				this.Default.Log( message, level );
-			// no category that exists
-			else if ( !this._routes.ContainsKey( category ) )
-				this.Default.Log( message, category, level );
+				this.Log( message, level );
 			else
 			{
-				foreach ( ILogger logger in this._routes[category] )
-					logger.Log( message, category, level );
+				category = category.Trim();
+
+				if ( this.Defaults != null )
+					foreach ( ILogger logger in this.Defaults )
+						logger.Log( message, category, level );
+
+				if ( this._routes.ContainsKey( category ) )
+					foreach ( ILogger logger in this._routes[category] )
+						logger.Log( message, category, level );
 			}
 		}
 
@@ -166,27 +204,35 @@ namespace Raydreams.Common.Logging
 		public void Log( string message, string category, LogLevel level, params object[] args )
 		{
 			if ( String.IsNullOrWhiteSpace( category ) )
-				this.Default.Log( message, level );
-			// no category that exists
-			else if ( !this._routes.ContainsKey( category ) )
-				this.Default.Log( message, category, level, args );
+				this.Log( message, level, args );
 			else
 			{
-				foreach ( ILogger logger in this._routes[category] )
-					logger.Log( message, category, level, args );
+				category = category.Trim();
+
+				if ( this.Defaults != null )
+					foreach ( ILogger logger in this.Defaults )
+						logger.Log( message, category, level, args );
+
+				if ( this._routes.ContainsKey( category ) )
+					foreach ( ILogger logger in this._routes[category] )
+						logger.Log( message, category, level, args );
 			}
 		}
 
 		/// <summary>Log an exception to the default logger</summary>
-		public void Log( Exception exception )
+		public void Log( Exception exp )
 		{
-			this.Default.Log( exception );
+			if ( this.Defaults != null )
+				foreach ( ILogger logger in this.Defaults )
+					logger.Log( exp );
 		}
 
 		/// <summary>Log an exception to the default logger</summary>
 		public void Log( Exception exp, params object[] args )
 		{
-			this.Default.Log( exp, args );
+			if ( this.Defaults != null )
+				foreach ( ILogger logger in this.Defaults )
+					logger.Log( exp, args );
 		}
 
 		#endregion [ Methods ]
