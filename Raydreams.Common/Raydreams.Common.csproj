@@ -3,7 +3,7 @@
 <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <PackageId>raydreams.common</PackageId>
-    <PackageVersion>1.0.33.0</PackageVersion>
+    <PackageVersion>1.0.34.0</PackageVersion>
     <Authors>TAG Digital Studios</Authors>
     <Description>A miscellaneous library mainly used for abstracting data repositories.</Description>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -16,15 +16,15 @@
    <Version>1.0.1.0</Version>
    <PackageReleaseNotes>Continuous additions, bug fixes and improvements.</PackageReleaseNotes>
    <Configurations>Debug Mac;Debug;Release</Configurations>
-   <ReleaseVersion>1.0.33.*</ReleaseVersion>
+   <ReleaseVersion>1.0.34.*</ReleaseVersion>
 </PropertyGroup>
 
 <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug Mac|AnyCPU' ">
-  <IntermediateOutputPath>obj\Debug\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1</IntermediateOutputPath>
+  <IntermediateOutputPath>obj\Debug\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1</IntermediateOutputPath>
   <DebugSymbols>true</DebugSymbols>
   <DebugType>portable</DebugType>
   <Optimize>false</Optimize>
-  <OutputPath>bin\Debug Mac\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1</OutputPath>
+  <OutputPath>bin\Debug Mac\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1</OutputPath>
   <DefineConstants>TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_1;</DefineConstants>
   <WarningLevel>4</WarningLevel>
   <DocumentationFile></DocumentationFile>

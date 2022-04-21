@@ -109,9 +109,11 @@ namespace Raydreams.Common.Logging
         [RayProperty( Source = "Message" )]
         public string Message { get; set; }
 
-        /// <summary>The actual log message</summary>
-        [BsonIgnore]
-        [JsonIgnore]
+        /// <summary>Additional arguments can be passed as a generic array</summary>
+        /// <remarks>Need to create a custom BSON serializer to conver to string[]</remarks>
+        [BsonElement( "args" )]
+        [BsonSerializer( typeof( ObjToStringArraySerializer ) )]
+        [JsonProperty( "args" )]
         public object[] Args { get; set; }
 
         /// <summary></summary>

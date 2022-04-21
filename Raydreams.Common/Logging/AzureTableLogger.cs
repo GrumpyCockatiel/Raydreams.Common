@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using Raydreams.Common.Extensions;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos.Table;
-using Raydreams.Common.Logging;
+using Raydreams.Common.Data;
 
-namespace Raydreams.Common.Data
+namespace Raydreams.Common.Logging
 {
 	/// <summary>Logs to an Azure Table</summary>
 	public class AzureTableLogger : AzureTableRepository<LogRecord>, ILogRepository, ILogger

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Reflection;
 using MongoDB.Driver;
 using Raydreams.Common.Extensions;
-using Raydreams.Common.Logging;
 using System.Threading.Tasks;
+using Raydreams.Common.Data;
 
-namespace Raydreams.Common.Data
+namespace Raydreams.Common.Logging
 {
 	/// <summary>Logs to a Mongo DB Collection usually named Logs</summary>
 	/// <remarks>This class is pretty old and could probably use a review and cleanup</remarks>
@@ -201,33 +201,36 @@ namespace Raydreams.Common.Data
 		/// <param name="msg">The actual message to log</param>
 		/// <param name="args">any additional data fields to append to the log message. Used for debugging.</param>
 		/// <returns></returns>
-		protected int InsertLog( string logger, LogLevel lvl, string category, string msg, params object[] args )
+		protected bool InsertLog( string logger, LogLevel lvl, string category, string msg, params object[] args )
 		{
-			int rows = 0;
-
 			if ( lvl < this.Level )
-				return rows;
+				return false;
 
 			try
 			{
 				if ( String.IsNullOrWhiteSpace( logger ) )
 					logger = Assembly.GetExecutingAssembly().FullName;
+				else
+					logger = logger.Trim();
 
 				// convert the args dictionary to a string and add to the end
-				if ( args != null && args.Length > 0 )
-					msg = String.Format( "{0} args={1}", msg, String.Join( ";", args ) );
+				//if ( args != null && args.Length > 0 )
+				//msg = String.Format( "{0} args={1}", msg, String.Join( ";", args ) );
 
 				if ( String.IsNullOrWhiteSpace( msg ) )
 					msg = String.Empty;
 
-				base.Insert( new LogRecord( msg, lvl ) { Category = category, Source = logger.Trim() }, this.TableName );
+				// inserts are fire and forget
+				_ = base.Insert( new LogRecord( msg, lvl )
+				{ Category = category, Source = logger, Args = args },
+					this.TableName );
 			}
 			catch ( System.Exception exp )
 			{
 				throw exp;
 			}
 
-			return rows;
+			return true;
 		}
 
 		#endregion [ ILogger ]

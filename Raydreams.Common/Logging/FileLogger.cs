@@ -11,10 +11,16 @@ namespace Raydreams.Common.Logging
 	{
 		#region [ Fields ]
 
-		private StreamWriter _osw = null;
+		/// <summary></summary>
+		private readonly object _fileLock = new object();
+
 		private DirectoryInfo _path = null;
+
 		private LogLevel _level = LogLevel.Off;
+
 		private string _src = null;
+
+		private string _filename = null;
 
 		#endregion [ Fields ]
 
@@ -23,15 +29,17 @@ namespace Raydreams.Common.Logging
 		/// <summary></summary>
 		/// <param name="source">Who is doing the logging.</param>
 		/// <param name="path">File path to log to</param>
-		public FileLogger( string source, string path ) : this(source, path, LogLevel.Off)
+		/// <param name="baseLevel">Minimum level to log.</param>
+		public FileLogger( string source, string path, string filename, LogLevel baseLevel = LogLevel.All )
 		{
+			this._path = new DirectoryInfo( path );
+			this.Level = baseLevel;
+			this.Source = source;
+			this.LogFilename = filename;
 		}
 
 		/// <summary></summary>
-		/// <param name="source">Who is doing the logging.</param>
-		/// <param name="path">File path to log to</param>
-		/// <param name="baseLevel">Minimum level to log.</param>
-		public FileLogger( string source, string path, LogLevel baseLevel )
+		public FileLogger( string source, string path, LogLevel baseLevel = LogLevel.All )
 		{
 			this._path = new DirectoryInfo( path );
 			this.Level = baseLevel;
@@ -42,6 +50,21 @@ namespace Raydreams.Common.Logging
 
 		#region [ Properties ]
 
+		/// <summary>When true, if the path does not exist, it will be created.
+		/// If false, and the path does not exist, not log will be written.
+		/// </summary>
+		public bool Create { get; set; } = true;
+
+		/// <summary>The name of the log file</summary>
+		public string LogFilename
+		{
+			get
+			{
+				return ( String.IsNullOrWhiteSpace( this._filename ) ) ? DefaultFilename : this._filename;
+			}
+			set { this._filename = value; }
+		}
+
 		/// <summary>The minimum level inclusive to log based on the LogLevel enumeration [level,...]</summary>
 		public LogLevel Level
 		{
@@ -50,19 +73,14 @@ namespace Raydreams.Common.Logging
 		}
 
 		/// <summary>The directory to log to</summary>
+		/// <remarks>Very bad name for this since it conflicts with System.IO.Path</remarks>
 		public DirectoryInfo Path
 		{
 			get { return this._path; }
 		}
 
-		/// <summary>Generates a log file name to use for today</summary>
-		public string DefaultFilename
-		{
-			get
-			{
-				return String.Format("{0}_log_{1}.txt", this._src, DateTime.UtcNow.ToString("yyyyMMdd"));
-			}
-		}
+		/// <summary>A fallback filename if none is provided</summary>
+		public string DefaultFilename => String.Format( "{0}_log_{1}.txt", this._src, DateTime.UtcNow.ToString( "yyyyMMdd" ) );
 
 		/// <summary>The logging source. Who is doing the logging.</summary>
 		public string Source
@@ -70,7 +88,7 @@ namespace Raydreams.Common.Logging
 			get { return this._src; }
 			set
 			{
-				if (value != null)
+				if ( value != null )
 					this._src = value.Trim();
 			}
 		}
@@ -85,17 +103,18 @@ namespace Raydreams.Common.Logging
 		{
 			this.InsertLog( this.Source, LogLevel.Debug, null, message, null );
 		}
-		/// <summary></summary>
-		/// <param name="message"></param>
-		public void Log(LogRecord message )
-		{
-			this.InsertLog( this.Source, message.Level, message.Category, message.Message, message.Args );
-		}
 
-		/// <summary></summary>
-		/// <param name="message"></param>
-		/// <param name="level"></param>
-		public void Log( string message, LogLevel level = LogLevel.Info )
+        /// <summary></summary>
+        /// <param name="message"></param>
+        public void Log( LogRecord message )
+        {
+            this.InsertLog( this.Source, message.Level, message.Category, message.Message, message.Args );
+        }
+
+        /// <summary></summary>
+        /// <param name="message"></param>
+        /// <param name="level"></param>
+        public void Log( string message, LogLevel level = LogLevel.Info )
 		{
 			this.InsertLog( this.Source, level, null, message, null );
 		}
@@ -138,20 +157,25 @@ namespace Raydreams.Common.Logging
 		/// <param name="msg">The actual message to log</param>
 		/// <param name="args">any additional data fields to append to the log message. Used for debugging.</param>
 		/// <returns></returns>
-		protected int InsertLog( string logger, LogLevel lvl, string category, string msg, params object[] args )
+		protected bool InsertLog( string logger, LogLevel lvl, string category, string msg, params object[] args )
 		{
-			StringBuilder sb = new StringBuilder( DateTime.UtcNow.ToString("s") );
+			StringBuilder sb = new StringBuilder( DateTime.UtcNow.ToString( "s" ) );
 			sb.Append( "|" );
 
 			if ( lvl < this.Level )
-				return 0;
+				return false;
 
 			// make sure the parent dir exists
 			if ( !this.Path.Exists )
-				return 0;
+			{
+				if ( this.Create )
+					Directory.CreateDirectory( this.Path.FullName );
+				else
+					return false;
+			}
 
 			// construct a full file path
-			string fullpath = this.Path.FullName + this.DefaultFilename;
+			string fullpath = System.IO.Path.Combine( this.Path.FullName, this.LogFilename );
 
 			// append level
 			sb.AppendFormat( "{0}|", lvl );
@@ -169,25 +193,31 @@ namespace Raydreams.Common.Logging
 			if ( args != null && args.Length > 0 )
 				sb.AppendFormat( "|args={0}", String.Join( ";", args ) );
 
-			try
+			// write log
+			lock ( _fileLock )
 			{
-				// open file
-				this._osw = new StreamWriter( fullpath, true );
+				StreamWriter osw = null;
 
-				// write log
-				this._osw.WriteLine( sb.ToString() );
-			}
-			catch ( System.Exception exp )
-			{
-				throw exp;
-			}
-			finally
-			{
-				if ( this._osw != null )
-					this._osw.Close();
+				try
+				{
+					// open file
+					using ( osw = new StreamWriter( fullpath, true ) )
+					{
+						osw.WriteLine( sb.ToString() );
+					}
+				}
+				catch ( System.Exception exp )
+				{
+					throw exp;
+				}
+				finally
+				{
+					if ( osw != null )
+						osw.Close();
+				}
 			}
 
-			return 1;
+			return true;
 		}
 
 		#endregion [ Methods ]
