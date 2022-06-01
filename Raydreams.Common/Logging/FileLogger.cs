@@ -11,16 +11,23 @@ namespace Raydreams.Common.Logging
 	{
 		#region [ Fields ]
 
-		/// <summary></summary>
+		/// <summary>file lock</summary>
 		private readonly object _fileLock = new object();
 
+		/// <summary>Dir path to the log file</summary>
 		private DirectoryInfo _path = null;
 
+		/// <summary>Lowest Log Level</summary>
 		private LogLevel _level = LogLevel.Off;
 
+		/// <summary>The Log Source name</summary>
 		private string _src = null;
 
+		/// <summary>Name of the log file</summary>
 		private string _filename = null;
+
+		/// <summary>Character to use to deliminate columns</summary>
+		private char _delim = '|';
 
 		#endregion [ Fields ]
 
@@ -50,6 +57,9 @@ namespace Raydreams.Common.Logging
 
 		#region [ Properties ]
 
+		/// <summary>Get the delimiter character</summary>
+		public char Delimiter => this._delim;
+
 		/// <summary>When true, if the path does not exist, it will be created.
 		/// If false, and the path does not exist, not log will be written.
 		/// </summary>
@@ -78,6 +88,9 @@ namespace Raydreams.Common.Logging
 		{
 			get { return this._path; }
 		}
+
+		/// <summary>Get the full file path to the log file</summary>
+		public FileInfo FullPath => new FileInfo( System.IO.Path.Combine( this.Path.FullName, this.LogFilename ) );
 
 		/// <summary>A fallback filename if none is provided</summary>
 		public string DefaultFilename => String.Format( "{0}_log_{1}.txt", this._src, DateTime.UtcNow.ToString( "yyyyMMdd" ) );
@@ -160,7 +173,7 @@ namespace Raydreams.Common.Logging
 		protected bool InsertLog( string logger, LogLevel lvl, string category, string msg, params object[] args )
 		{
 			StringBuilder sb = new StringBuilder( DateTime.UtcNow.ToString( "s" ) );
-			sb.Append( "|" );
+			sb.Append( this.Delimiter );
 
 			if ( lvl < this.Level )
 				return false;
@@ -174,24 +187,22 @@ namespace Raydreams.Common.Logging
 					return false;
 			}
 
-			// construct a full file path
-			string fullpath = System.IO.Path.Combine( this.Path.FullName, this.LogFilename );
-
 			// append level
-			sb.AppendFormat( "{0}|", lvl );
+			sb.AppendFormat( "{0}{1}", lvl, this.Delimiter );
 
 			// append category
 			if ( String.IsNullOrWhiteSpace( category ) )
-				sb.Append( "<none>|" );
+				sb.Append( $"<none>{this.Delimiter}" );
 			else
-				sb.AppendFormat( "{0}|", category );
+				sb.AppendFormat( "{0}{1}", category, this.Delimiter );
 
 			if ( !String.IsNullOrWhiteSpace( msg ) )
 				sb.AppendFormat( "{0}", msg.Trim() );
 
 			// convert the args dictionary to a string and add to the end
 			if ( args != null && args.Length > 0 )
-				sb.AppendFormat( "|args={0}", String.Join( ";", args ) );
+				//sb.AppendFormat( "|args={0}", String.Join( ";", args ) );
+				sb.AppendFormat( "{0}{1}", this.Delimiter, String.Join( ";", args ) );
 
 			// write log
 			lock ( _fileLock )
@@ -201,7 +212,7 @@ namespace Raydreams.Common.Logging
 				try
 				{
 					// open file
-					using ( osw = new StreamWriter( fullpath, true ) )
+					using ( osw = new StreamWriter( this.FullPath.FullName, true ) )
 					{
 						osw.WriteLine( sb.ToString() );
 					}
