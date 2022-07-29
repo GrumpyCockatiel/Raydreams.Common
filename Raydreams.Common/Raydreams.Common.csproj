@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <PackageId>raydreams.common</PackageId>
     <PackageVersion>1.0.34.0</PackageVersion>
     <Authors>TAG Digital Studios</Authors>
@@ -20,11 +20,11 @@
 </PropertyGroup>
 
 <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug Mac|AnyCPU' ">
-  <IntermediateOutputPath>obj\Debug\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netcoreapp3.1</IntermediateOutputPath>
+  <IntermediateOutputPath>obj\Debug\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netcoreapp3.1\net5.0\net5.0\net6.0</IntermediateOutputPath>
   <DebugSymbols>true</DebugSymbols>
   <DebugType>portable</DebugType>
   <Optimize>false</Optimize>
-  <OutputPath>bin\Debug Mac\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netcoreapp3.1</OutputPath>
+  <OutputPath>bin\Debug Mac\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netstandard2.1\netcoreapp3.1\net5.0\net5.0\net6.0</OutputPath>
   <DefineConstants>TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_1;</DefineConstants>
   <WarningLevel>4</WarningLevel>
   <DocumentationFile></DocumentationFile>
@@ -34,22 +34,28 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
-    <PackageReference Include="System.Data.SQLite" Version="1.0.115.5" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.116" />
     <PackageReference Include="SendGrid" Version="9.28.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.12.0" />
     <PackageReference Include="Microsoft.Azure.Cosmos.Table" Version="1.0.8" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
-    <PackageReference Include="MongoDB.Driver" Version="2.15.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.16.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Config\" />
     <Folder Include="Data\Azure\" />
     <Folder Include="Serializers\" />
+    <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Serializers\" />
     <None Remove="Microsoft.Azure.Cosmos.Table" />
     <None Remove="System.Drawing.Common" />
     <None Remove="MongoDB.Driver" />
+    <None Remove="Resources\" />
+    <None Remove="Resources\lorem.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="**/*" />
   </ItemGroup>
 </Project>

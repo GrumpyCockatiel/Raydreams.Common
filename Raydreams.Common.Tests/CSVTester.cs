@@ -41,5 +41,13 @@ namespace Raydreams.Common.Tests
 
             Assert.IsNotNull( results );
         }
+
+        [TestMethod]
+        public void ResourceTest()
+        {
+            string results = new Resourcer().Test();
+
+            Assert.IsNotNull( results );
+        }
     }
 }
